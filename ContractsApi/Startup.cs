@@ -184,7 +184,7 @@ namespace ContractsApi
                 app.UseHsts();
             }
 
-            app.UseXRay("base-api");
+            app.UseXRay("contracts-api");
 
 
             //Get All ApiVersions,
