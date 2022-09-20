@@ -1,11 +1,11 @@
 version: "3.2"
 
 services:
-  base-api:
-    image: base-api
+  contracts-api:
+    image: contracts-api
     build:
      context: .
-     dockerfile: BaseApi/Dockerfile
+     dockerfile: ContractsApi/Dockerfile
      args:
      - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
     ports:
@@ -27,11 +27,11 @@ services:
     volumes:
       - ./database:/docker-entrypoint-initdb.d
 
-  base-api-test:
-    image: base-api-test
+  contracts-api-test:
+    image: contracts-api-test
     build:
       context: .
-      dockerfile: BaseApi.Tests/Dockerfile
+      dockerfile: ContractsApi.Tests/Dockerfile
       args:
       - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
     environment:
