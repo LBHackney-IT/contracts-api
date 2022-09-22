@@ -8,20 +8,13 @@ provider:
     apiGateway: true
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
-  # TODO: Enable this line if DynamoDb is in use
-  #account: ${opt:account}
   region: eu-west-2
-  apiKeys:
-    - secureAccess:
-      - api-key-${self:service}-${self:provider.stage}
-  usagePlan:
-    - secureAccess:
-        throttle:
-          burstLimit: 200
-          rateLimit: 100
+
+plugins:
+  - serverless-associate-waf
+  - '@serverless/safeguards-plugin'
 
 package:
-# TODO: Rename zipfile in build.sh and build.cmd to match this
   artifact: ./bin/release/netcoreapp3.1/contracts-api.zip
 
 functions:
@@ -30,9 +23,7 @@ functions:
     handler: ContractsApi::ContractsApi.LambdaEntryPoint::FunctionHandlerAsync
     role: lambdaExecutionRole
     environment:
-# TODO: Create ssm variables for this API's postgres mirror then rename contracts-api below to match api name
-# TODO: Remove this line if DynamoDb is being used
-      CONNECTION_STRING: Host=${ssm:/contracts-api/${self:provider.stage}/postgres-hostname};Port=${ssm:/contracts-api/${self:provider.stage}/postgres-port};Database=contracts-api-mirror;Username=${ssm:/contracts-api/${self:provider.stage}/postgres-username};Password=${ssm:/contracts-api/${self:provider.stage}/postgres-password}
+      CONTRACTS_SNS_ARN: ${ssm:/sns-topic/${self:provider.stage}/contracts/arn}
     events:
       - http:
           path: /{proxy+}
@@ -72,6 +63,15 @@ resources:
           - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
           - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
         Policies:
+          - PolicyName: postToSns
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Effect: Allow
+                    Action:
+                      - "sns:Publish"
+                    Resource:
+                      - ${ssm:/sns-topic/${self:provider.stage}/contracts/arn}
           - PolicyName: manageLogs
             PolicyDocument:
               Version: '2012-10-17'
@@ -105,7 +105,37 @@ resources:
                   Action:
                     - "lambda:InvokeFunction"
                   Resource: "*"
+          - PolicyName: dynamoDBAccess
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Effect: Allow
+                    Action:
+                      - "dynamodb:BatchGet*"
+                      - "dynamodb:BatchWrite"
+                      - "dynamodb:DeleteItem"
+                      - "dynamodb:DescribeStream"
+                      - "dynamodb:DescribeTable"
+                      - "dynamodb:Get*"
+                      - "dynamodb:PutItem"
+                      - "dynamodb:Query"
+                      - "dynamodb:Scan"
+                      - "dynamodb:UpdateItem"
+                    Resource:
+                      - 'Fn::Join':
+                          - ':'
+                          - - 'arn:aws:dynamodb'
+                            - Ref: 'AWS::Region'
+                            - Ref: 'AWS::AccountId'
+                            - 'table/Contracts'
 custom:
+  safeguards:
+    - title: Require authorizer
+      safeguard: require-authorizer
+      path: ./policies
+  associateWaf:
+    name: Platform_APIs_Web_ACL
+    version: V2
   vpc:
     development:
       subnetIds:
