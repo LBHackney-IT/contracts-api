@@ -18,7 +18,7 @@ namespace ContractsApi.Tests.V1.Controllers
         {
             _mockGetByIdUseCase = new Mock<IGetContractByIdUseCase>();
             _mockGetByAllUseCase = new Mock<IGetAllUseCase>();
-            _classUnderTest = new ContractsApiController(_mockGetByAllUseCase.Object, _mockGetByIdUseCase.Object);
+            _classUnderTest = new ContractsApiController(_mockGetByIdUseCase.Object);
         }
 
 
