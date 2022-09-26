@@ -8,14 +8,14 @@ namespace ContractsApi.Tests.V1.UseCase
 {
     public class GetByIdUseCaseTests : LogCallAspectFixture
     {
-        private Mock<IExampleGateway> _mockGateway;
-        private GetByIdUseCase _classUnderTest;
+        private Mock<IContractGateway> _mockGateway;
+        private GetContractByIdUseCase _classUnderTest;
 
         [SetUp]
         public void SetUp()
         {
-            _mockGateway = new Mock<IExampleGateway>();
-            _classUnderTest = new GetByIdUseCase(_mockGateway.Object);
+            _mockGateway = new Mock<IContractGateway>();
+            _classUnderTest = new GetContractByIdUseCase(_mockGateway.Object);
         }
 
         //TODO: test to check that the use case retrieves the correct record from the database.

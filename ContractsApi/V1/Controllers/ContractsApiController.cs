@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using HeaderConstants = ContractsApi.V1.Infrastructure.HeaderConstants;
 
 namespace ContractsApi.V1.Controllers
 {

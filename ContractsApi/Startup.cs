@@ -32,6 +32,12 @@ using Hackney.Core.DynamoDb.HealthCheck;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.JWT;
 using Hackney.Core.Middleware.Exception;
+using System.Text.Json.Serialization;
+using Hackney.Core.Sns;
+using Hackney.Core.Http;
+using Amazon.XRay.Recorder.Core;
+using Amazon;
+using Hackney.Core.Middleware;
 
 namespace ContractsApi
 {
@@ -47,15 +53,23 @@ namespace ContractsApi
 
         public IConfiguration Configuration { get; }
         private static List<ApiVersionDescription> _apiVersions { get; set; }
-        //TODO update the below to the name of your API
-        private const string ApiName = "Your API Name";
+        private const string ApiName = "Contracts API";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services
                 .AddMvc()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            //services.AddFluentValidation(Assembly.GetAssembly(typeof(ChargesValidator)));
+
             services.AddApiVersioning(o =>
             {
                 o.DefaultApiVersion = new ApiVersion(1, 0);
@@ -65,9 +79,7 @@ namespace ContractsApi
 
             services.AddSingleton<IApiVersionDescriptionProvider, DefaultApiVersionDescriptionProvider>();
 
-            services.AddDynamoDbHealthCheck<DatabaseEntity>();
-
-            services.AddTokenFactory();
+            //services.AddDynamoDbHealthCheck<ContractsDb>();
 
             services.AddSwaggerGen(c =>
             {
@@ -128,52 +140,48 @@ namespace ContractsApi
 
             services.ConfigureLambdaLogging(Configuration);
 
+            AWSXRayRecorder.InitializeInstance(Configuration);
+            AWSXRayRecorder.RegisterLogger(LoggingOptions.SystemDiagnostics);
+
+            services.ConfigureDynamoDB();
+            services.ConfigureSns();
             services.AddLogCallAspect();
-
-            ConfigureDbContext(services);
-            //TODO: For DynamoDb, remove the line above and uncomment the line below.
-            //services.ConfigureDynamoDB();
-
             RegisterGateways(services);
             RegisterUseCases(services);
+
+            services.AddSingleton<IConfiguration>(Configuration);
+
+            //services.AddScoped<ISnsFactory, ContractSnsFactory>();
+            //services.AddScoped<IEntityUpdater, EntityUpdater>();
+
+            ConfigureHackneyCoreDI(services);
         }
 
-        private static void ConfigureDbContext(IServiceCollection services)
+        private static void ConfigureHackneyCoreDI(IServiceCollection services)
         {
-            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-
-            services.AddDbContext<DatabaseContext>(
-                opt => opt.UseNpgsql(connectionString).AddXRayInterceptor(true));
+            services.AddSnsGateway()
+                .AddTokenFactory()
+                .AddHttpContextWrapper();
         }
-
-
 
         private static void RegisterGateways(IServiceCollection services)
         {
-            services.AddScoped<IExampleGateway, ExampleGateway>();
-
-            //TODO: For DynamoDb, remove the line above and uncomment the line below.
-            //services.AddScoped<IExampleDynamoGateway, DynamoDbGateway>();
+            services.AddScoped<IContractGateway, DynamoDbGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
         {
-            services.AddScoped<IGetAllUseCase, GetAllUseCase>();
-            services.AddScoped<IGetContractByIdUseCase, GetByIdUseCase>();
+            services.AddScoped<IGetContractByIdUseCase, GetContractByIdUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             app.UseCors(builder => builder
-                  .AllowAnyOrigin()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .WithExposedHeaders("x-correlation-id"));
-
-            app.UseCorrelationId();
-            app.UseLoggingScope();
-            app.UseCustomExceptionHandler(logger);
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithExposedHeaders("ETag", "If-Match", "x-correlation-id"));
 
             if (env.IsDevelopment())
             {
@@ -184,8 +192,12 @@ namespace ContractsApi
                 app.UseHsts();
             }
 
+            app.UseCorrelationId();
+            app.UseLoggingScope();
+            app.UseCustomExceptionHandler(logger);
             app.UseXRay("contracts-api");
 
+            app.EnableRequestBodyRewind();
 
             //Get All ApiVersions,
             var api = app.ApplicationServices.GetService<IApiVersionDescriptionProvider>();
@@ -213,6 +225,7 @@ namespace ContractsApi
                     ResponseWriter = HealthCheckResponseWriter.WriteResponse
                 });
             });
+
             app.UseLogCall();
         }
     }

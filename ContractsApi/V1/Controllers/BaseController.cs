@@ -19,7 +19,7 @@ namespace ContractsApi.V1.Controllers
         public string GetCorrelationId()
         {
             StringValues correlationId;
-            HttpContext.Request.Headers.TryGetValue(HeaderConstants.CorrelationId, out correlationId);
+            HttpContext.Request.Headers.TryGetValue(Hackney.Core.Middleware.HeaderConstants.CorrelationId, out correlationId);
 
             if (!correlationId.Any())
                 throw new KeyNotFoundException("Request is missing a correlationId");
