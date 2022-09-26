@@ -1,4 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
+using ContractsApi.V1.Boundary.Requests;
+using ContractsApi.V1.Boundary.Response;
 using ContractsApi.V1.Domain;
 using ContractsApi.V1.Factories;
 using ContractsApi.V1.Infrastructure;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ContractsApi.V1.Gateways
 {
-    public class DynamoDbGateway : IExampleDynamoGateway
+    public class DynamoDbGateway : IContractGateway
     {
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly ILogger<DynamoDbGateway> _logger;
@@ -27,12 +29,12 @@ namespace ContractsApi.V1.Gateways
         }
 
         [LogCall]
-        public async Task<Entity> GetEntityById(int id)
+        public async Task<ContractResponseObject> GetEntityById(ContractQueryRequest query)
         {
-            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id parameter {id}");
+            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {query.Id}");
 
-            var result = await _dynamoDbContext.LoadAsync<DatabaseEntity>(id).ConfigureAwait(false);
-            return result?.ToDomain();
+            var result = await _dynamoDbContext.LoadAsync<ContractResponseObject>(query.Id).ConfigureAwait(false);
+            return result;
         }
     }
 }
