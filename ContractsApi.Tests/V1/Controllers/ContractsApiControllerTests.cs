@@ -10,13 +10,13 @@ namespace ContractsApi.Tests.V1.Controllers
     public class ContractsApiControllerTests : LogCallAspectFixture
     {
         private ContractsApiController _classUnderTest;
-        private Mock<IGetByIdUseCase> _mockGetByIdUseCase;
+        private Mock<IGetContractByIdUseCase> _mockGetByIdUseCase;
         private Mock<IGetAllUseCase> _mockGetByAllUseCase;
 
         [SetUp]
         public void SetUp()
         {
-            _mockGetByIdUseCase = new Mock<IGetByIdUseCase>();
+            _mockGetByIdUseCase = new Mock<IGetContractByIdUseCase>();
             _mockGetByAllUseCase = new Mock<IGetAllUseCase>();
             _classUnderTest = new ContractsApiController(_mockGetByAllUseCase.Object, _mockGetByIdUseCase.Object);
         }
