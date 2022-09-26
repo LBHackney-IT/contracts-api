@@ -1,3 +1,4 @@
+using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Boundary.Response;
 using ContractsApi.V1.Infrastructure;
 using ContractsApi.V1.UseCase.Interfaces;
@@ -18,11 +19,11 @@ namespace ContractsApi.V1.Controllers
     //TODO: rename class to match the API name
     public class ContractsApiController : BaseController
     {
-        private readonly IGetContractByIdUseCase _getByIdUseCase;
+        private readonly IGetContractByIdUseCase _getContractByIdUseCase;
         //private readonly IPostNewContractUseCase _postNewContractUseCase;
-        public ContractsApiController(IGetContractByIdUseCase getByIdUseCase)
+        public ContractsApiController(IGetContractByIdUseCase getContractByIdUseCase)
         {
-            _getByIdUseCase = getByIdUseCase;
+            _getContractByIdUseCase = getContractByIdUseCase;
         }
 
         /// <summary>
@@ -38,9 +39,9 @@ namespace ContractsApi.V1.Controllers
         [HttpGet]
         [Route("{id}")]
         [LogCall(LogLevel.Information)]
-        public async Task<IActionResult> GetContractById([FromRoute] GetContractByIdRequest query)
+        public async Task<IActionResult> GetContractById([FromRoute] ContractQueryRequest query)
         {
-            var result = await _getAssetByIdUseCase.ExecuteAsync(query).ConfigureAwait(false);
+            var result = await _getContractByIdUseCase.Execute(query).ConfigureAwait(false);
             if (result == null) return NotFound(query.Id);
 
             var eTag = string.Empty;
@@ -50,36 +51,6 @@ namespace ContractsApi.V1.Controllers
             HttpContext.Response.Headers.Add(HeaderConstants.ETag, EntityTagHeaderValue.Parse($"\"{eTag}\"").Tag);
 
             return Ok(result);
-        }
-
-        //TODO: add xml comments containing information that will be included in the auto generated swagger docs (https://github.com/LBHackney-IT/lbh-base-api/wiki/Controllers-and-Response-Objects)
-        /// <summary>
-        /// ...
-        /// </summary>
-        /// <response code="200">...</response>
-        /// <response code="400">Invalid Query Parameter.</response>
-        [ProducesResponseType(typeof(ResponseObjectList), StatusCodes.Status200OK)]
-        [HttpGet]
-        [LogCall(LogLevel.Information)]
-
-        public IActionResult ListContacts()
-        {
-            return Ok(_getAllUseCase.Execute());
-        }
-
-        /// <summary>
-        /// ...
-        /// </summary>
-        /// <response code="200">...</response>
-        /// <response code="404">No ? found for the specified ID</response>
-        [ProducesResponseType(typeof(ResponseObject), StatusCodes.Status200OK)]
-        [HttpGet]
-        [LogCall(LogLevel.Information)]
-        //TODO: rename to match the identifier that will be used
-        [Route("{yourId}")]
-        public IActionResult ViewRecord(int yourId)
-        {
-            return Ok(_getByIdUseCase.Execute(yourId));
         }
     }
 }

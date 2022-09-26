@@ -1,24 +1,29 @@
+using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Boundary.Response;
+using ContractsApi.V1.Domain;
 using ContractsApi.V1.Factories;
 using ContractsApi.V1.Gateways;
 using ContractsApi.V1.UseCase.Interfaces;
 using Hackney.Core.Logging;
+using System.Threading.Tasks;
 
 namespace ContractsApi.V1.UseCase
 {
-    //TODO: Rename class name and interface name to reflect the entity they are representing eg. GetClaimantByIdUseCase
     public class GetContractByIdUseCase : IGetContractByIdUseCase
     {
-        private IExampleGateway _gateway;
-        public GetContractByIdUseCase(IExampleGateway gateway)
+        private readonly IContractGateway _gateway;
+
+        public GetContractByIdUseCase(IContractGateway gateway)
         {
             _gateway = gateway;
         }
+
         [LogCall]
-        //TODO: rename id to the name of the identifier that will be used for this API, the type may also need to change
-        public ResponseObject Execute(int id)
+        public async Task<ContractResponseObject> Execute(ContractQueryRequest query)
         {
-            return _gateway.GetEntityById(id).ToResponse();
+            var contract = await _gateway.GetEntityById(query).ConfigureAwait(false);
+
+            return contract;
         }
     }
 }
