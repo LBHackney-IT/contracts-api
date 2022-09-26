@@ -48,8 +48,8 @@ resource "aws_sns_topic" "contracts" {
     kms_master_key_id           = "alias/aws/sns"
 }
 
-resource "aws_ssm_parameter" "contract_sns_arn" {
-    name  = "/sns-topic/development/tenure/arn"
+resource "aws_ssm_parameter" "contracts_sns_arn" {
+    name  = "/sns-topic/development/contracts/arn"
     type  = "String"
     value = aws_sns_topic.contracts.arn
 }
