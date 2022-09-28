@@ -29,11 +29,24 @@ namespace ContractsApi.V1.Gateways
         }
 
         [LogCall]
-        public async Task<ContractResponseObject> GetEntityById(ContractQueryRequest query)
+        public async Task<Contract> GetEntityById(ContractQueryRequest query)
         {
             _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {query.Id}");
 
-            var result = await _dynamoDbContext.LoadAsync<ContractResponseObject>(query.Id).ConfigureAwait(false);
+            var result = await _dynamoDbContext.LoadAsync<Contract>(query.Id).ConfigureAwait(false);
+            return result;
+        }
+
+        [LogCall]
+
+        public async Task<Contract> PostNewContractAsync(CreateContractRequestObject createContractRequestObject)
+        {
+            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for id {createContractRequestObject.TargetId}");
+            _dynamoDbContext.SaveAsync(createContractRequestObject).GetAwaiter().GetResult();
+
+            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {createContractRequestObject.TargetId}");
+            var result = await _dynamoDbContext.LoadAsync<Contract>(createContractRequestObject.TargetId).ConfigureAwait(false);
+
             return result;
         }
     }

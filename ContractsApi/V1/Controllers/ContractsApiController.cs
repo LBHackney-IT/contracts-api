@@ -2,10 +2,13 @@ using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Boundary.Response;
 using ContractsApi.V1.Infrastructure;
 using ContractsApi.V1.UseCase.Interfaces;
+using Hackney.Core.Http;
+using Hackney.Core.JWT;
 using Hackney.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using HeaderConstants = ContractsApi.V1.Infrastructure.HeaderConstants;
@@ -13,18 +16,26 @@ using HeaderConstants = ContractsApi.V1.Infrastructure.HeaderConstants;
 namespace ContractsApi.V1.Controllers
 {
     [ApiController]
-    //TODO: Rename to match the APIs endpoint
-    [Route("api/v1/residents")]
+    [Route("api/v1/contracts")]
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    //TODO: rename class to match the API name
+
     public class ContractsApiController : BaseController
     {
         private readonly IGetContractByIdUseCase _getContractByIdUseCase;
-        //private readonly IPostNewContractUseCase _postNewContractUseCase;
-        public ContractsApiController(IGetContractByIdUseCase getContractByIdUseCase)
+        private readonly IPostNewContractUseCase _postNewContractUseCase;
+        private readonly ITokenFactory _tokenFactory;
+        private readonly IHttpContextWrapper _contextWrapper;
+
+        public ContractsApiController(IGetContractByIdUseCase getContractByIdUseCase,
+            IPostNewContractUseCase postNewContractUseCase, ITokenFactory tokenFactory,
+            IHttpContextWrapper contextWrapper)
         {
             _getContractByIdUseCase = getContractByIdUseCase;
+            _postNewContractUseCase = postNewContractUseCase;
+
+            _tokenFactory = tokenFactory;
+            _contextWrapper = contextWrapper;
         }
 
         /// <summary>
@@ -52,6 +63,18 @@ namespace ContractsApi.V1.Controllers
             HttpContext.Response.Headers.Add(HeaderConstants.ETag, EntityTagHeaderValue.Parse($"\"{eTag}\"").Tag);
 
             return Ok(result);
+        }
+
+        [ProducesResponseType(typeof(ContractResponseObject), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost]
+        [LogCall(LogLevel.Information)]
+        public async Task<IActionResult> PostNewContract([FromBody] CreateContractRequestObject createContractRequestObject)
+        {
+            var token = _tokenFactory.Create(_contextWrapper.GetContextRequestHeaders(HttpContext));
+
+            var contract = await _postNewContractUseCase.ExecuteAsync(createContractRequestObject, token).ConfigureAwait(false);
+            return Created(new Uri($"api/v1/contracts/{contract.TargetId}", UriKind.Relative), contract);
         }
     }
 }

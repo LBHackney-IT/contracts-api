@@ -8,7 +8,7 @@ namespace ContractsApi.V1.Gateways
 {
     public interface IContractGateway
     {
-        Task<ContractResponseObject> GetEntityById(ContractQueryRequest query);
-
+        Task<Contract> GetEntityById(ContractQueryRequest query);
+        Task<Contract> PostNewContractAsync(CreateContractRequestObject createContractRequestObject);
     }
 }

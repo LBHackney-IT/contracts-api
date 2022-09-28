@@ -38,6 +38,8 @@ using Hackney.Core.Http;
 using Amazon.XRay.Recorder.Core;
 using Amazon;
 using Hackney.Core.Middleware;
+using ContractsApi.V1.Factories;
+using ContractsApi.V1.Domain;
 
 namespace ContractsApi
 {
@@ -79,7 +81,7 @@ namespace ContractsApi
 
             services.AddSingleton<IApiVersionDescriptionProvider, DefaultApiVersionDescriptionProvider>();
 
-            //services.AddDynamoDbHealthCheck<ContractsDb>();
+            services.AddDynamoDbHealthCheck<Contract>();
 
             services.AddSwaggerGen(c =>
             {
@@ -151,7 +153,7 @@ namespace ContractsApi
 
             services.AddSingleton<IConfiguration>(Configuration);
 
-            //services.AddScoped<ISnsFactory, ContractSnsFactory>();
+            services.AddScoped<ISnsFactory, ContractSnsFactory>();
             //services.AddScoped<IEntityUpdater, EntityUpdater>();
 
             ConfigureHackneyCoreDI(services);
@@ -172,6 +174,7 @@ namespace ContractsApi
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetContractByIdUseCase, GetContractByIdUseCase>();
+            services.AddScoped<IPostNewContractUseCase, PostNewContractUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
