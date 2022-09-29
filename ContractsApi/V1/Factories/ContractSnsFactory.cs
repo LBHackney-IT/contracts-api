@@ -14,7 +14,7 @@ namespace ContractsApi.V1.Factories
             {
                 CorrelationId = Guid.NewGuid(),
                 DateTime = DateTime.UtcNow,
-                EntityId = contract.TargetId,
+                EntityId = contract.Id,
                 Id = Guid.NewGuid(),
                 EventType = CreateContractEventConstants.EVENTTYPE,
                 Version = CreateContractEventConstants.V1_VERSION,

@@ -6,14 +6,14 @@ namespace ContractsApi.V1.Boundary.Requests
 {
     public class CreateContractRequestObject
     {
-        public Guid TargetId { get; set; }
+        public Guid Id { get; set; }
         public string TargetType { get; set; }
         public string ContractType { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? RenewalDate { get; set; }
-        public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
-        public IEnumerable<Charges> Charges { get; set; }
+        public List<RelatedPeople> RelatedPeople { get; set; }
+        public List<Charges> Charges { get; set; }
         public int? VersionNumber { get; set; }
     }
 }
