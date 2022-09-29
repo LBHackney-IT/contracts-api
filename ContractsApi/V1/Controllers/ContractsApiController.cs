@@ -74,7 +74,7 @@ namespace ContractsApi.V1.Controllers
             var token = _tokenFactory.Create(_contextWrapper.GetContextRequestHeaders(HttpContext));
 
             var contract = await _postNewContractUseCase.ExecuteAsync(createContractRequestObject, token).ConfigureAwait(false);
-            return Created(new Uri($"api/v1/contracts/{contract.TargetId}", UriKind.Relative), contract);
+            return Created(new Uri($"api/v1/contracts/{contract.Id}", UriKind.Relative), contract);
         }
     }
 }

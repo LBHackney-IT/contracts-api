@@ -24,9 +24,9 @@ namespace ContractsApi.V1.UseCase
             _snsFactory = snsFactory;
         }
 
-        public async Task<Contract> ExecuteAsync(CreateContractRequestObject createTenureRequestObject, Token token)
+        public async Task<ContractResponseObject> ExecuteAsync(CreateContractRequestObject createTenureRequestObject, Token token)
         {
-            var contract = await _contractGateway.PostNewContractAsync(createTenureRequestObject).ConfigureAwait(false);
+            var contract = await _contractGateway.PostNewContractAsync(createTenureRequestObject.ToDatabase()).ConfigureAwait(false);
             if (contract != null && token != null)
             {
                 var contractSnsMessage = _snsFactory.CreateContract(contract, token);
@@ -34,7 +34,7 @@ namespace ContractsApi.V1.UseCase
 
                 await _snsGateway.Publish(contractSnsMessage, contractTopicArn).ConfigureAwait(false);
             }
-            return contract;
+            return contract.ToResponse();
         }
     }
 }

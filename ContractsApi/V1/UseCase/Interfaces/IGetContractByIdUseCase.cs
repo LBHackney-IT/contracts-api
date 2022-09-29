@@ -7,6 +7,6 @@ namespace ContractsApi.V1.UseCase.Interfaces
 {
     public interface IGetContractByIdUseCase
     {
-        Task<Contract> Execute(ContractQueryRequest query);
+        Task<ContractResponseObject> Execute(ContractQueryRequest query);
     }
 }

@@ -23,31 +23,26 @@ namespace ContractsApi.V1.Gateways
             _logger = logger;
         }
 
-        public List<Entity> GetAll()
-        {
-            return new List<Entity>();
-        }
-
         [LogCall]
         public async Task<Contract> GetEntityById(ContractQueryRequest query)
         {
             _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {query.Id}");
 
-            var result = await _dynamoDbContext.LoadAsync<Contract>(query.Id).ConfigureAwait(false);
-            return result;
+            var result = await _dynamoDbContext.LoadAsync<ContractDb>(query.Id).ConfigureAwait(false);
+            return result?.ToDomain();
         }
 
         [LogCall]
 
-        public async Task<Contract> PostNewContractAsync(CreateContractRequestObject createContractRequestObject)
+        public async Task<Contract> PostNewContractAsync(ContractDb contract)
         {
-            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for id {createContractRequestObject.TargetId}");
-            _dynamoDbContext.SaveAsync(createContractRequestObject).GetAwaiter().GetResult();
+            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for id {contract.Id}");
+            _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
-            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {createContractRequestObject.TargetId}");
-            var result = await _dynamoDbContext.LoadAsync<Contract>(createContractRequestObject.TargetId).ConfigureAwait(false);
+            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {contract.Id}");
+            var result = await _dynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
 
-            return result;
+            return result?.ToDomain();
         }
     }
 }

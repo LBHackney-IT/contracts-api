@@ -8,6 +8,6 @@ namespace ContractsApi.V1.UseCase.Interfaces
 {
     public interface IPostNewContractUseCase
     {
-        Task<Contract> ExecuteAsync(CreateContractRequestObject createTenureRequestObject, Token token);
+        Task<ContractResponseObject> ExecuteAsync(CreateContractRequestObject createTenureRequestObject, Token token);
     }
 }
