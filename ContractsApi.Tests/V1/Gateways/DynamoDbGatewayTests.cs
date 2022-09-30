@@ -1,6 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
-using ContractsApi.Tests.V1.Helper;
 using ContractsApi.V1.Domain;
 using ContractsApi.V1.Gateways;
 using ContractsApi.V1.Infrastructure;
@@ -59,10 +58,10 @@ namespace ContractsApi.Tests.V1.Gateways
         //    _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id parameter {entity.Id}", Times.Once());
         //}
 
-        private void InsertDatatoDynamoDB(DatabaseEntity entity)
-        {
-            DynamoDbContext.SaveAsync<DatabaseEntity>(entity).GetAwaiter().GetResult();
-            CleanupActions.Add(async () => await DynamoDbContext.DeleteAsync(entity).ConfigureAwait(false));
-        }
+        // private void InsertDatatoDynamoDB(DatabaseEntity entity)
+        // {
+        //     DynamoDbContext.SaveAsync<DatabaseEntity>(entity).GetAwaiter().GetResult();
+        //     CleanupActions.Add(async () => await DynamoDbContext.DeleteAsync(entity).ConfigureAwait(false));
+        // }
     }
 }
