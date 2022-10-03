@@ -1,17 +1,25 @@
 using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using AutoFixture;
 using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Boundary.Response;
 using ContractsApi.V1.Controllers;
-using ContractsApi.V1.Domain;
+using ContractsApi.V1.Infrastructure;
 using ContractsApi.V1.UseCase.Interfaces;
+using ContractsApi.Tests.V1.Helper;
 using FluentAssertions;
 using Hackney.Core.Http;
 using Hackney.Core.JWT;
-using Hackney.Core.Testing.Shared;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
+using Microsoft.AspNetCore.Routing;
 
 namespace ContractsApi.Tests.V1.Controllers
 {
@@ -23,6 +31,14 @@ namespace ContractsApi.Tests.V1.Controllers
         private readonly Mock<IPostNewContractUseCase> _mockPostNewContractUseCase;
         private readonly Mock<ITokenFactory> _mockTokenFactory;
         private readonly Mock<IHttpContextWrapper> _mockContextWrapper;
+        private readonly Fixture _fixture = new Fixture();
+
+        private readonly Mock<HttpRequest> _mockHttpRequest;
+        private readonly HeaderDictionary _requestHeaders;
+        private readonly Mock<HttpResponse> _mockHttpResponse;
+        private readonly HeaderDictionary _responseHeaders;
+
+        private const string RequestBodyText = "Some request body text";
 
         public ContractsApiControllerTests()
         {
@@ -32,23 +48,92 @@ namespace ContractsApi.Tests.V1.Controllers
             _mockContextWrapper = new Mock<IHttpContextWrapper>();
             _classUnderTest = new ContractsApiController(_mockGetByIdUseCase.Object, _mockPostNewContractUseCase.Object,
                 _mockTokenFactory.Object, _mockContextWrapper.Object);
-        }
 
-        private ContractQueryRequest ConstructRequest(Guid? id = null)
-        {
-            return new ContractQueryRequest() { Id = id ?? Guid.NewGuid() };
+            _mockHttpRequest = new Mock<HttpRequest>();
+            _mockHttpResponse = new Mock<HttpResponse>();
+
+            _mockHttpRequest.SetupGet(x => x.Body)
+                .Returns(new MemoryStream(Encoding.Default.GetBytes(RequestBodyText)));
+
+            _requestHeaders = new HeaderDictionary();
+            _mockHttpRequest.SetupGet(x => x.Headers).Returns(_requestHeaders);
+
+            _mockContextWrapper
+                .Setup(x => x.GetContextRequestHeaders(It.IsAny<HttpContext>()))
+                .Returns(_requestHeaders);
+
+            _responseHeaders = new HeaderDictionary();
+            _mockHttpResponse.SetupGet(x => x.Headers).Returns(_responseHeaders);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.SetupGet(x => x.Request).Returns(_mockHttpRequest.Object);
+            mockHttpContext.SetupGet(x => x.Response).Returns(_mockHttpResponse.Object);
+
+            var controllerContext = new ControllerContext(new ActionContext(mockHttpContext.Object, new RouteData(),
+                new ControllerActionDescriptor()));
+            _classUnderTest.ControllerContext = controllerContext;
         }
 
         [Fact]
         public async Task GetContractByIdUseCaseReturns404IfNoIfNoContractFound()
         {
-            var request = ConstructRequest();
+            var request = BoundaryHelper.ConstructRequest();
             _mockGetByIdUseCase.Setup(x => x.Execute(request)).ReturnsAsync((ContractResponseObject) null);
 
             var response = await _classUnderTest.GetContractById(request).ConfigureAwait(false);
 
+            response.Should().BeOfType(typeof(NotFoundObjectResult));
+            (response as NotFoundObjectResult).Value.Should().Be(request.Id);
+        }
+
+        [Fact]
+        public async Task GetContractByIdUseCaseReturnsAContract()
+        {
+            var foundContract = _fixture.Create<ContractResponseObject>();
+            var request = BoundaryHelper.ConstructRequest(foundContract.Id);
+            _mockGetByIdUseCase.Setup(x => x.Execute(request)).ReturnsAsync(foundContract);
+
+            var response = await _classUnderTest.GetContractById(request).ConfigureAwait(false);
+
             response.Should().BeOfType(typeof(OkObjectResult));
-           (response as NotFoundObjectResult).Value.Should().Be(request.Id);
+            (response as OkObjectResult).Value.Should().Be(foundContract);
+
+            var expectedEtagValue = $"\"{foundContract.VersionNumber}\"";
+            _classUnderTest.HttpContext.Response.Headers.TryGetValue(HeaderConstants.ETag, out StringValues val)
+                .Should().BeTrue();
+            val.First().Should().Be(expectedEtagValue);
+        }
+
+        [Fact]
+        public async Task GetContractWhenVersionNumberIsNullReturnsEmptyETag()
+        {
+            var mockContractResponse = _fixture.Build<ContractResponseObject>()
+                .With(x => x.VersionNumber, (int?) null)
+                .Create();
+
+            var mockRequest = BoundaryHelper.ConstructRequest(mockContractResponse.Id);
+
+            _mockGetByIdUseCase.Setup(x => x.Execute(mockRequest)).ReturnsAsync(mockContractResponse);
+
+            await _classUnderTest.GetContractById(mockRequest).ConfigureAwait(false);
+
+            var expectedEtagValue = $"\"\"";
+            _classUnderTest.HttpContext.Response.Headers.TryGetValue(HeaderConstants.ETag, out StringValues val)
+                .Should().BeTrue();
+            val.First().Should().Be(expectedEtagValue);
+        }
+
+        [Fact]
+        public async Task PostNewContractReturns201CreatedResponseWhenSuccessful()
+        {
+            var newContract = _fixture.Create<ContractResponseObject>();
+            var request = BoundaryHelper.ConstructPostRequest();
+            _mockPostNewContractUseCase.Setup(x => x.ExecuteAsync(request, It.IsAny<Token>())).ReturnsAsync(newContract);
+
+            var response = await _classUnderTest.PostNewContract(request).ConfigureAwait(false);
+
+            response.Should().BeOfType(typeof(CreatedResult));
+            (response as CreatedResult).Value.Should().Be(newContract);
         }
     }
 }
