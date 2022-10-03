@@ -21,9 +21,9 @@ namespace ContractsApi.V1.UseCase
         [LogCall]
         public async Task<ContractResponseObject> Execute(ContractQueryRequest query)
         {
-            var contract = await _gateway.GetEntityById(query).ConfigureAwait(false);
+            var contract = await _gateway.GetContractById(query).ConfigureAwait(false);
 
-            return contract.ToResponse();
+            return contract?.ToResponse();
         }
     }
 }

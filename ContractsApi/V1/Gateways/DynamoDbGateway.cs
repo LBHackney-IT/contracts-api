@@ -24,7 +24,7 @@ namespace ContractsApi.V1.Gateways
         }
 
         [LogCall]
-        public async Task<Contract> GetEntityById(ContractQueryRequest query)
+        public async Task<Contract> GetContractById(ContractQueryRequest query)
         {
             _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {query.Id}");
 
@@ -42,7 +42,7 @@ namespace ContractsApi.V1.Gateways
             _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {contract.Id}");
             var result = await _dynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
 
-            return result?.ToDomain();
+            return result.ToDomain();
         }
     }
 }
