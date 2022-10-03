@@ -20,6 +20,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=local
     links:
       - dynamodb-database
+      - localstack-contracts-api
 
   contracts-api-test:
     image: contracts-api-test
@@ -36,9 +37,24 @@ services:
       - AWS_SECRET_ACCESS_KEY=local
     links:
      - dynamodb-database
+     - localstack-contracts-api
 
   dynamodb-database:
     image: amazon/dynamodb-local
     ports:
       - 8000:8000
     command: -jar DynamoDBLocal.jar -sharedDb
+
+  localstack-contracts-api:
+      image: localstack/localstack:0.14.1
+      hostname: awslocal
+      ports:
+        - "4566:4566"
+      environment:
+        - SERVICES=sns,sqs
+        - DEBUG=1
+        - DOCKER_HOST=unix:///var/run/docker.sock
+        - HOST_TMP_FOLDER=/tmp/localstack
+      volumes:
+        - "./.localstack:/tmp/localstack"
+        - "/var/run/docker.sock:/var/run/docker.sock"
