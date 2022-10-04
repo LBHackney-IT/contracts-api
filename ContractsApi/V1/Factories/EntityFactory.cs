@@ -1,3 +1,4 @@
+using System.Linq;
 using ContractsApi.V1.Domain;
 using ContractsApi.V1.Infrastructure;
 
@@ -5,26 +6,37 @@ namespace ContractsApi.V1.Factories
 {
     public static class EntityFactory
     {
-        public static Entity ToDomain(this DatabaseEntity databaseEntity)
-        {
-            //TODO: Map the rest of the fields in the domain object.
-            // More information on this can be found here https://github.com/LBHackney-IT/lbh-base-api/wiki/Factory-object-mappings
 
-            return new Entity
+        public static Contract ToDomain(this ContractDb contractDb)
+        {
+            return new Contract
             {
-                Id = databaseEntity.Id,
-                CreatedAt = databaseEntity.CreatedAt
+                Id = contractDb.Id,
+                TargetType = contractDb.TargetType,
+                ContractType = contractDb.ContractType,
+                StartDate = contractDb.StartDate,
+                EndDate = contractDb.EndDate,
+                RenewalDate = contractDb.RenewalDate,
+                RelatedPeople = contractDb.RelatedPeople,
+                Charges = contractDb.Charges,
+                VersionNumber = contractDb.VersionNumber
             };
         }
 
-        public static DatabaseEntity ToDatabase(this Entity entity)
+        public static ContractDb ToDatabase(this Contract contract)
         {
-            //TODO: Map the rest of the fields in the database object.
 
-            return new DatabaseEntity
+            return new ContractDb()
             {
-                Id = entity.Id,
-                CreatedAt = entity.CreatedAt
+                Id = contract.Id,
+                TargetType = contract.TargetType,
+                ContractType = contract.ContractType,
+                StartDate = contract.StartDate,
+                EndDate = contract.EndDate,
+                RenewalDate = contract.RenewalDate,
+                RelatedPeople = contract.RelatedPeople.ToList(),
+                Charges = contract.Charges.ToList(),
+                VersionNumber = contract.VersionNumber
             };
         }
     }

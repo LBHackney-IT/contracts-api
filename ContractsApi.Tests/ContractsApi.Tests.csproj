@@ -16,8 +16,12 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Hackney.Core.Http" Version="1.73.0-feat-patch-api-g0004" />
+    <PackageReference Include="Hackney.Core.JWT" Version="1.72.0" />
+    <PackageReference Include="Hackney.Core.Sns" Version="1.74.0-feat-generic-sns0002" />
     <PackageReference Include="Hackney.Core.Testing.DynamoDb" Version="1.57.0" />
     <PackageReference Include="Hackney.Core.Testing.Shared" Version="1.54.0" />
+    <PackageReference Include="Hackney.Core.Testing.Sns" Version="1.71.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,14 +34,14 @@
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="nunit" Version="3.11.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.3" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ContractsApi\ContractsApi.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="V1\Infrastructure\" />
-  </ItemGroup>
-
 </Project>

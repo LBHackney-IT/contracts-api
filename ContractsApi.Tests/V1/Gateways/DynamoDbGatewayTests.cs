@@ -1,6 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
-using ContractsApi.Tests.V1.Helper;
 using ContractsApi.V1.Domain;
 using ContractsApi.V1.Gateways;
 using ContractsApi.V1.Infrastructure;
@@ -8,61 +7,92 @@ using FluentAssertions;
 using Hackney.Core.Testing.Shared;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
+using ContractsApi.Tests.V1.Helper;
+using ContractsApi.V1.Factories;
+using Hackney.Core.Testing.DynamoDb;
+using Xunit;
 
 namespace ContractsApi.Tests.V1.Gateways
 {
-    //TODO: Remove this file if DynamoDb gateway not being used
-    //TODO: Rename Tests to match gateway name
-    //For instruction on how to run tests please see the wiki: https://github.com/LBHackney-IT/lbh-base-api/wiki/Running-the-test-suite.
-    [TestFixture]
-    public class DynamoDbGatewayTests : DynamoDbIntegrationTests<Startup>
+
+    [Collection("AppTest collection")]
+    public class DynamoDbGatewayTests : IDisposable
     {
         private readonly Fixture _fixture = new Fixture();
-        private DynamoDbGateway _classUnderTest;
+        private readonly DynamoDbGateway _classUnderTest;
+        private readonly Mock<ILogger<DynamoDbGateway>> _logger;
+        private readonly IDynamoDbFixture _dbFixture;
 
-        private Mock<ILogger<DynamoDbGateway>> _logger;
-        private LogCallAspectFixture _logCallAspectFixture;
 
-        [SetUp]
-        public void Setup()
+        public DynamoDbGatewayTests(MockWebApplicationFactory<Startup> appFactory)
         {
-            _logCallAspectFixture = new LogCallAspectFixture();
+            _dbFixture = appFactory.DynamoDbFixture;
             _logger = new Mock<ILogger<DynamoDbGateway>>();
-            _classUnderTest = new DynamoDbGateway(DynamoDbContext, _logger.Object);
+            _classUnderTest = new DynamoDbGateway(_dbFixture.DynamoDbContext, _logger.Object);
         }
 
-        [Test]
-        [Ignore("Enable if using DynamoDb")]
-
-        public async Task GetEntityByIdReturnsNullIfEntityDoesntExist()
+        public void Dispose()
         {
-            var response = await _classUnderTest.GetEntityById(123).ConfigureAwait(false);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private bool _disposed;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && !_disposed)
+            {
+                _disposed = true;
+            }
+        }
+
+        private async Task InsertDataIntoDynamoDB(ContractDb entity)
+        {
+            await _dbFixture.SaveEntityAsync(entity).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task GetContractByIdReturnsNullIfNoContractFound()
+        {
+            var request = BoundaryHelper.ConstructRequest();
+            var response = await _classUnderTest.GetContractById(request).ConfigureAwait(false);
 
             response.Should().BeNull();
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id parameter 123", Times.Once());
-
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id {request.Id}", Times.Once());
         }
 
-        [Test]
-        [Ignore("Enable if using DynamoDb")]
-        public async Task VerifiesGatewayMethodsAddtoDB()
+        [Fact]
+        public async Task GetContractByIdReturnsContractIfItExists()
         {
-            var entity = _fixture.Build<DatabaseEntity>()
-                                   .With(x => x.CreatedAt, DateTime.UtcNow).Create();
-            InsertDatatoDynamoDB(entity);
+            var contract = _fixture.Build<ContractDb>()
+                .With(x => x.VersionNumber, (int?) null)
+                .Create();
 
-            var result = await _classUnderTest.GetEntityById(entity.Id).ConfigureAwait(false);
-            result.Should().BeEquivalentTo(entity);
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id parameter {entity.Id}", Times.Once());
+            await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
+
+            var request = BoundaryHelper.ConstructRequest(contract.Id);
+            var response = await _classUnderTest.GetContractById(request).ConfigureAwait(false);
+
+            response.Should().BeEquivalentTo(contract);
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id {request.Id}", Times.Once());
         }
 
-        private void InsertDatatoDynamoDB(DatabaseEntity entity)
+        [Fact]
+        public async Task PostNewContractAsyncAddsContractToDatabase()
         {
-            DynamoDbContext.SaveAsync<DatabaseEntity>(entity).GetAwaiter().GetResult();
-            CleanupActions.Add(async () => await DynamoDbContext.DeleteAsync(entity).ConfigureAwait(false));
+            var contract = _fixture.Build<ContractDb>()
+                .With(x => x.VersionNumber, (int?) null)
+                .Create();
+
+            await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
+            var response = await _classUnderTest.PostNewContractAsync(contract).ConfigureAwait(false);
+
+            response.Should().NotBeNull();
+            response.Should().BeEquivalentTo(contract.ToDomain());
+
+            await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
         }
     }
 }

@@ -1,56 +1,80 @@
+using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Boundary.Response;
+using ContractsApi.V1.Infrastructure;
 using ContractsApi.V1.UseCase.Interfaces;
+using Hackney.Core.Http;
+using Hackney.Core.JWT;
 using Hackney.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using HeaderConstants = ContractsApi.V1.Infrastructure.HeaderConstants;
 
 namespace ContractsApi.V1.Controllers
 {
     [ApiController]
-    //TODO: Rename to match the APIs endpoint
-    [Route("api/v1/residents")]
+    [Route("api/v1/contracts")]
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    //TODO: rename class to match the API name
+
     public class ContractsApiController : BaseController
     {
-        private readonly IGetAllUseCase _getAllUseCase;
-        private readonly IGetByIdUseCase _getByIdUseCase;
-        public ContractsApiController(IGetAllUseCase getAllUseCase, IGetByIdUseCase getByIdUseCase)
-        {
-            _getAllUseCase = getAllUseCase;
-            _getByIdUseCase = getByIdUseCase;
-        }
+        private readonly IGetContractByIdUseCase _getContractByIdUseCase;
+        private readonly IPostNewContractUseCase _postNewContractUseCase;
+        private readonly ITokenFactory _tokenFactory;
+        private readonly IHttpContextWrapper _contextWrapper;
 
-        //TODO: add xml comments containing information that will be included in the auto generated swagger docs (https://github.com/LBHackney-IT/lbh-base-api/wiki/Controllers-and-Response-Objects)
-        /// <summary>
-        /// ...
-        /// </summary>
-        /// <response code="200">...</response>
-        /// <response code="400">Invalid Query Parameter.</response>
-        [ProducesResponseType(typeof(ResponseObjectList), StatusCodes.Status200OK)]
-        [HttpGet]
-        [LogCall(LogLevel.Information)]
-
-        public IActionResult ListContacts()
+        public ContractsApiController(IGetContractByIdUseCase getContractByIdUseCase,
+            IPostNewContractUseCase postNewContractUseCase, ITokenFactory tokenFactory,
+            IHttpContextWrapper contextWrapper)
         {
-            return Ok(_getAllUseCase.Execute());
+            _getContractByIdUseCase = getContractByIdUseCase;
+            _postNewContractUseCase = postNewContractUseCase;
+
+            _tokenFactory = tokenFactory;
+            _contextWrapper = contextWrapper;
         }
 
         /// <summary>
-        /// ...
+        /// Retrieves the asset with the supplied id
         /// </summary>
-        /// <response code="200">...</response>
-        /// <response code="404">No ? found for the specified ID</response>
-        [ProducesResponseType(typeof(ResponseObject), StatusCodes.Status200OK)]
+        /// <response code="200">Successfully retrieved details for the specified ID</response>
+        /// <response code="404">No tenure information found for the specified ID</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(ContractResponseObject), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
+        [Route("{id}")]
         [LogCall(LogLevel.Information)]
-        //TODO: rename to match the identifier that will be used
-        [Route("{yourId}")]
-        public IActionResult ViewRecord(int yourId)
+        public async Task<IActionResult> GetContractById([FromRoute] ContractQueryRequest query)
         {
-            return Ok(_getByIdUseCase.Execute(yourId));
+            var result = await _getContractByIdUseCase.Execute(query).ConfigureAwait(false);
+            if (result == null) return NotFound(query.Id);
+
+            var eTag = string.Empty;
+            if (result.VersionNumber.HasValue)
+                eTag = result.VersionNumber.ToString();
+
+            HttpContext.Response.Headers.Add(HeaderConstants.ETag, EntityTagHeaderValue.Parse($"\"{eTag}\"").Tag);
+
+            return Ok(result);
+        }
+
+        [ProducesResponseType(typeof(ContractResponseObject), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost]
+        [LogCall(LogLevel.Information)]
+        public async Task<IActionResult> PostNewContract([FromBody] CreateContractRequestObject createContractRequestObject)
+        {
+            var token = _tokenFactory.Create(_contextWrapper.GetContextRequestHeaders(HttpContext));
+
+            var contract = await _postNewContractUseCase.ExecuteAsync(createContractRequestObject, token).ConfigureAwait(false);
+            return Created(new Uri($"api/v1/contracts/{contract.Id}", UriKind.Relative), contract);
         }
     }
 }

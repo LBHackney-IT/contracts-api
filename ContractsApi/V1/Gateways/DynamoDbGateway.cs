@@ -1,4 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
+using ContractsApi.V1.Boundary.Requests;
+using ContractsApi.V1.Boundary.Response;
 using ContractsApi.V1.Domain;
 using ContractsApi.V1.Factories;
 using ContractsApi.V1.Infrastructure;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ContractsApi.V1.Gateways
 {
-    public class DynamoDbGateway : IExampleDynamoGateway
+    public class DynamoDbGateway : IContractGateway
     {
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly ILogger<DynamoDbGateway> _logger;
@@ -21,18 +23,26 @@ namespace ContractsApi.V1.Gateways
             _logger = logger;
         }
 
-        public List<Entity> GetAll()
+        [LogCall]
+        public async Task<Contract> GetContractById(ContractQueryRequest query)
         {
-            return new List<Entity>();
+            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {query.Id}");
+
+            var result = await _dynamoDbContext.LoadAsync<ContractDb>(query.Id).ConfigureAwait(false);
+            return result?.ToDomain();
         }
 
         [LogCall]
-        public async Task<Entity> GetEntityById(int id)
-        {
-            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id parameter {id}");
 
-            var result = await _dynamoDbContext.LoadAsync<DatabaseEntity>(id).ConfigureAwait(false);
-            return result?.ToDomain();
+        public async Task<Contract> PostNewContractAsync(ContractDb contract)
+        {
+            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for id {contract.Id}");
+            _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
+
+            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {contract.Id}");
+            var result = await _dynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
+
+            return result.ToDomain();
         }
     }
 }
