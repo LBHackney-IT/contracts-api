@@ -29,6 +29,7 @@ namespace ContractsApi.Tests.V1.Controllers
         private readonly ContractsApiController _classUnderTest;
         private readonly Mock<IGetContractByIdUseCase> _mockGetByIdUseCase;
         private readonly Mock<IPostNewContractUseCase> _mockPostNewContractUseCase;
+        private Mock<IPatchContractUseCase> _mockPatchContractUseCase;
         private readonly Mock<ITokenFactory> _mockTokenFactory;
         private readonly Mock<IHttpContextWrapper> _mockContextWrapper;
         private readonly Fixture _fixture = new Fixture();
@@ -44,9 +45,10 @@ namespace ContractsApi.Tests.V1.Controllers
         {
             _mockGetByIdUseCase = new Mock<IGetContractByIdUseCase>();
             _mockPostNewContractUseCase = new Mock<IPostNewContractUseCase>();
+            _mockPatchContractUseCase = new Mock<IPatchContractUseCase>();
             _mockTokenFactory = new Mock<ITokenFactory>();
             _mockContextWrapper = new Mock<IHttpContextWrapper>();
-            _classUnderTest = new ContractsApiController(_mockGetByIdUseCase.Object, _mockPostNewContractUseCase.Object,
+            _classUnderTest = new ContractsApiController(_mockGetByIdUseCase.Object, _mockPostNewContractUseCase.Object, _mockPatchContractUseCase.Object,
                 _mockTokenFactory.Object, _mockContextWrapper.Object);
 
             _mockHttpRequest = new Mock<HttpRequest>();
@@ -134,6 +136,36 @@ namespace ContractsApi.Tests.V1.Controllers
 
             response.Should().BeOfType(typeof(CreatedResult));
             (response as CreatedResult).Value.Should().Be(newContract);
+        }
+
+        [Fact]
+        public async Task PatchContractReturns204NoContentIfSuccessful()
+        {
+            var mockGuid = new Guid();
+            var mockRequestObject = _fixture.Create<EditContractRequest>();
+
+            _mockPatchContractUseCase
+                .Setup(x => x.ExecuteAsync(mockGuid, mockRequestObject, It.IsAny<string>(), It.IsAny<Token>(),
+                    It.IsAny<int?>())).ReturnsAsync(_fixture.Create<ContractResponseObject>());
+
+            var response = await _classUnderTest.PatchContract(mockGuid, mockRequestObject).ConfigureAwait(false);
+
+            response.Should().BeOfType(typeof(NoContentResult));
+        }
+
+        [Fact]
+        public async Task PatchContractReturns404NotFoundIfNoContractIsFound()
+        {
+            var mockGuid = new Guid();
+            var mockRequestObject = _fixture.Create<EditContractRequest>();
+
+            _mockPatchContractUseCase
+                .Setup(x => x.ExecuteAsync(mockGuid, mockRequestObject, It.IsAny<string>(), It.IsAny<Token>(),
+                    It.IsAny<int?>())).ReturnsAsync((ContractResponseObject) null);
+
+            var response = await _classUnderTest.PatchContract(mockGuid, mockRequestObject).ConfigureAwait(false);
+
+            response.Should().BeOfType(typeof(NotFoundResult));
         }
     }
 }
