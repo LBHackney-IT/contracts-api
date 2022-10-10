@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using ContractsApi.V1.Infrastructure.Exceptions;
 using HeaderConstants = ContractsApi.V1.Infrastructure.HeaderConstants;
 
 namespace ContractsApi.V1.Controllers
@@ -24,15 +25,17 @@ namespace ContractsApi.V1.Controllers
     {
         private readonly IGetContractByIdUseCase _getContractByIdUseCase;
         private readonly IPostNewContractUseCase _postNewContractUseCase;
+        private readonly IPatchContractUseCase _patchContractUseCase;
         private readonly ITokenFactory _tokenFactory;
         private readonly IHttpContextWrapper _contextWrapper;
 
         public ContractsApiController(IGetContractByIdUseCase getContractByIdUseCase,
-            IPostNewContractUseCase postNewContractUseCase, ITokenFactory tokenFactory,
+            IPostNewContractUseCase postNewContractUseCase, IPatchContractUseCase patchContractUseCase, ITokenFactory tokenFactory,
             IHttpContextWrapper contextWrapper)
         {
             _getContractByIdUseCase = getContractByIdUseCase;
             _postNewContractUseCase = postNewContractUseCase;
+            _patchContractUseCase = patchContractUseCase;
 
             _tokenFactory = tokenFactory;
             _contextWrapper = contextWrapper;
@@ -75,6 +78,54 @@ namespace ContractsApi.V1.Controllers
 
             var contract = await _postNewContractUseCase.ExecuteAsync(createContractRequestObject, token).ConfigureAwait(false);
             return Created(new Uri($"api/v1/contracts/{contract.Id}", UriKind.Relative), contract);
+        }
+
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPatch]
+        [Route("{id}")]
+        [LogCall(LogLevel.Information)]
+        public async Task<IActionResult> PatchContract([FromRoute] Guid id, [FromBody] EditContractRequest contract)
+        {
+            var bodyText = await HttpContext.Request.GetRawBodyStringAsync().ConfigureAwait(false);
+            var ifMatch = GetIfMatchFromHeader();
+            var token = _tokenFactory.Create(_contextWrapper.GetContextRequestHeaders(HttpContext));
+
+            try
+            {
+                var result = await _patchContractUseCase.ExecuteAsync(id, contract, bodyText, token, ifMatch)
+                    .ConfigureAwait(false);
+
+                if (result == null) return NotFound();
+
+                return NoContent();
+            }
+            catch (VersionNumberConflictException e)
+            {
+                return Conflict(e.Message);
+            }
+        }
+
+        private int? GetIfMatchFromHeader()
+        {
+            var header = HttpContext.Request.Headers.GetHeaderValue(HeaderConstants.IfMatch);
+
+            if (header == null)
+                return null;
+
+            _ = EntityTagHeaderValue.TryParse(header, out var entityTagHeaderValue);
+
+            if (entityTagHeaderValue == null)
+                return null;
+
+            var version = entityTagHeaderValue.Tag.Replace("\"", string.Empty);
+
+            if (int.TryParse(version, out var numericValue))
+                return numericValue;
+
+            return null;
         }
     }
 }

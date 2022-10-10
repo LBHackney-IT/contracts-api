@@ -154,7 +154,7 @@ namespace ContractsApi
             services.AddSingleton<IConfiguration>(Configuration);
 
             services.AddScoped<ISnsFactory, ContractSnsFactory>();
-            //services.AddScoped<IEntityUpdater, EntityUpdater>();
+            services.AddScoped<IEntityUpdater, EntityUpdater>();
 
             ConfigureHackneyCoreDI(services);
         }
@@ -175,6 +175,7 @@ namespace ContractsApi
         {
             services.AddScoped<IGetContractByIdUseCase, GetContractByIdUseCase>();
             services.AddScoped<IPostNewContractUseCase, PostNewContractUseCase>();
+            services.AddScoped<IPatchContractUseCase, PatchContractUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

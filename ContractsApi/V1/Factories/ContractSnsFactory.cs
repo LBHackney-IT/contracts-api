@@ -28,25 +28,25 @@ namespace ContractsApi.V1.Factories
             };
         }
 
-        //public EntityEventSns UpdateTenure(UpdateEntityResult<Contract> updateResult, Token token)
-        //{
-        //    return new EntityEventSns
-        //    {
-        //        CorrelationId = Guid.NewGuid(),
-        //        DateTime = DateTime.UtcNow,
-        //        EntityId = updateResult.UpdatedEntity.Id,
-        //        Id = Guid.NewGuid(),
-        //        EventType = UpdateContractConstants.EVENTTYPE,
-        //        Version = UpdateContractConstants.V1_VERSION,
-        //        SourceDomain = UpdateContractConstants.SOURCE_DOMAIN,
-        //        SourceSystem = UpdateContractConstants.SOURCE_SYSTEM,
-        //        EventData = new EventData
-        //        {
-        //            NewData = updateResult.NewValues,
-        //            OldData = updateResult.OldValues
-        //        },
-        //        User = new User { Name = token.Name, Email = token.Email }
-        //    };
-        //}
+        public EntityEventSns UpdateContract(UpdateEntityResult<ContractDb> updateResult, Token token)
+        {
+            return new EntityEventSns
+            {
+                CorrelationId = Guid.NewGuid(),
+                DateTime = DateTime.UtcNow,
+                EntityId = updateResult.UpdatedEntity.Id,
+                Id = Guid.NewGuid(),
+                EventType = UpdateContractConstants.EVENTTYPE,
+                Version = UpdateContractConstants.V1_VERSION,
+                SourceDomain = UpdateContractConstants.SOURCE_DOMAIN,
+                SourceSystem = UpdateContractConstants.SOURCE_SYSTEM,
+                EventData = new EventData
+                {
+                    NewData = updateResult.NewValues,
+                    OldData = updateResult.OldValues
+                },
+                User = new User { Name = token.Name, Email = token.Email }
+            };
+        }
     }
 }
