@@ -110,7 +110,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var mockRawBody = "";
 
             var response = await _classUnderTest
-                .PatchContract(mockGuid, mockRequestObject, mockRawBody,It.IsAny<int?>())
+                .PatchContract(mockGuid, mockRequestObject, mockRawBody, It.IsAny<int?>())
                 .ConfigureAwait(false);
 
             response.Should().BeNull();

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ContractsApi.V1.Infrastructure
 {
-      // TODO - move to common nuget package
+    // TODO - move to common nuget package
 
     /// <summary>
     /// Interface describing generic methods for updating an instance of an entity from the suypplied request object and raw request json
