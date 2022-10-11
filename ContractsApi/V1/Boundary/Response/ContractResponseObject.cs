@@ -7,6 +7,7 @@ namespace ContractsApi.V1.Boundary.Response
     public class ContractResponseObject
     {
         public Guid Id { get; set; }
+        public Guid TargetId { get; set; }
         public string TargetType { get; set; }
         public string ContractType { get; set; }
         public DateTime? StartDate { get; set; }

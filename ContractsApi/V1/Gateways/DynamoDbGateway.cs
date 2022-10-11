@@ -41,10 +41,10 @@ namespace ContractsApi.V1.Gateways
 
         public async Task<Contract> PostNewContractAsync(ContractDb contract)
         {
-            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for id {contract.Id}");
-            _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
+            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for target id {contract.TargetId}");
+           _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
-            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {contract.Id}");
+            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for target id {contract.TargetId}");
             var result = await _dynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
 
             return result.ToDomain();

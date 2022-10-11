@@ -13,6 +13,7 @@ namespace ContractsApi.V1.Factories
             return new ContractResponseObject
             {
                 Id = contract.Id,
+                TargetId = contract.TargetId,
                 TargetType = contract.TargetType,
                 ContractType = contract.ContractType,
                 StartDate = contract.StartDate,
