@@ -12,7 +12,8 @@ namespace ContractsApi.V1.Factories
 
             return new ContractDb()
             {
-                TargetId = request.TargetId == Guid.Empty ? Guid.NewGuid() : request.TargetId,
+                Id = Guid.NewGuid(),
+                TargetId = request.TargetId,
                 TargetType = request.TargetType,
                 ContractType = request.ContractType,
                 StartDate = request.StartDate,
