@@ -174,6 +174,7 @@ namespace ContractsApi
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetContractByIdUseCase, GetContractByIdUseCase>();
+            services.AddScoped<IGetContractsByTargetIdUseCase, GetContractsByTargetIdUseCase>();
             services.AddScoped<IPostNewContractUseCase, PostNewContractUseCase>();
             services.AddScoped<IPatchContractUseCase, PatchContractUseCase>();
         }

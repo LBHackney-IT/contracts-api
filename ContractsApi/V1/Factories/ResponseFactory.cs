@@ -24,5 +24,12 @@ namespace ContractsApi.V1.Factories
                 VersionNumber = contract.VersionNumber
             };
         }
+
+        public static List<ContractResponseObject> ToResponse(this IEnumerable<Contract> domainList)
+        {
+            if (domainList is null) return new List<ContractResponseObject>();
+
+            return domainList.Select(domain => domain.ToResponse()).ToList();
+        }
     }
 }
