@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ContractsApi.Tests.V1.Helper;
 using ContractsApi.V1.Boundary.Requests;
@@ -60,6 +61,24 @@ namespace ContractsApi.Tests.V1.Gateways
             await _dbFixture.SaveEntityAsync(entity).ConfigureAwait(false);
         }
 
+        private List<ContractDb> UpsertContracts(Guid targetId, int count)
+        {
+            var contracts = new List<ContractDb>();
+
+            contracts.AddRange(_fixture.Build<ContractDb>()
+                .With(x => x.TargetId, targetId)
+                .With(x => x.TargetType, "asset")
+                .With(x => x.VersionNumber, (int?) null)
+                .CreateMany(count));
+
+            foreach (var contract in contracts)
+            {
+                _dbFixture.SaveEntityAsync(contract).GetAwaiter().GetResult();
+            }
+
+            return contracts;
+        }
+
         [Fact]
         public async Task GetContractByIdReturnsNullIfNoContractFound()
         {
@@ -84,6 +103,74 @@ namespace ContractsApi.Tests.V1.Gateways
 
             response.Should().BeEquivalentTo(contract);
             _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id {request.Id}", Times.Once());
+        }
+
+        [Fact]
+        public async Task GetContractsByTargetIdReturnsEmptyIfNoRecords()
+        {
+            var id = Guid.NewGuid();
+            var request = new GetContractsQueryRequest {TargetId = id, TargetType = "asset"};
+
+            var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+
+            response.Should().NotBeNull();
+            response.Results.Should().BeEmpty();
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetContractsByTargetIdReturnsContractsIfFound()
+        {
+            var id = Guid.NewGuid();
+            var request = new GetContractsQueryRequest {TargetId = id, TargetType = "asset"};
+            var contracts = UpsertContracts(id, 5);
+
+            var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(contracts);
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetContractsByTargetIdReturnsMultiplePagesOfRecords()
+        {
+            var id = Guid.NewGuid();
+            var request = new GetContractsQueryRequest {TargetId = id, TargetType = "asset", PageSize = 5};
+            var contracts = UpsertContracts(id, 9);
+            var expectedFirstPage = contracts.OrderByDescending(x => x.Id).Take(5);
+            var expectedSecondPage = contracts.Except(expectedFirstPage).OrderByDescending(x => x.Id);
+
+            var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(expectedFirstPage);
+            response.PaginationDetails.HasNext.Should().BeTrue();
+            response.PaginationDetails.NextToken.Should().NotBeNull();
+
+            request.PaginationToken = response.PaginationDetails.NextToken;
+            response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(expectedSecondPage);
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetContractsByTargetIdReturnsNoPaginationTokenIfPageSizeEqualsRecordCount()
+        {
+            var id = Guid.NewGuid();
+            var request = new GetContractsQueryRequest { TargetId = id, TargetType = "asset", PageSize = 10 };
+            var contracts = UpsertContracts(id, 10);
+
+            var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+
+            response.Should().NotBeNull();
+            response.Results.Should().BeEquivalentTo(contracts);
+            response.PaginationDetails.HasNext.Should().BeFalse();
+            response.PaginationDetails.NextToken.Should().BeNull();
         }
 
         [Fact]
