@@ -68,6 +68,16 @@ namespace ContractsApi.V1.Gateways
             if (resultsSet.Any())
             {
                 dbContracts.AddRange(_dynamoDbContext.FromDocuments<ContractDb>(resultsSet));
+
+                if (!string.IsNullOrEmpty(PaginationDetails.EncodeToken(paginationToken)))
+                {
+                    queryConfig.PaginationToken = paginationToken;
+                    queryConfig.Limit = 1;
+                    search = table.Query(queryConfig);
+                    resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
+                    if (!resultsSet.Any())
+                        paginationToken = null;
+                }
             }
 
             return new PagedResult<Contract>(dbContracts.Select(x => x.ToDomain()), new PaginationDetails(
