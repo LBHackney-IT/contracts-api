@@ -78,7 +78,6 @@ namespace ContractsApi.V1.Controllers
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(PagedResult<ContractResponseObject>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
         [LogCall(LogLevel.Information)]
