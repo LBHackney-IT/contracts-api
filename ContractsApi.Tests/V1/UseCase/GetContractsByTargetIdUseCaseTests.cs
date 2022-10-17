@@ -36,7 +36,7 @@ namespace ContractsApi.Tests.V1.UseCase
         public async Task UseCaseReturnsAnEmptyListIfNoContractsFound(string paginationToken)
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, PaginationToken = paginationToken};
+            var request = new GetContractsQueryRequest { TargetId = id, PaginationToken = paginationToken };
             var result = new PagedResult<Contract>(new List<Contract>(), new PaginationDetails(paginationToken));
             _mockGateway.Setup(x => x.GetContractsByTargetId(request)).ReturnsAsync(result);
 
@@ -52,7 +52,7 @@ namespace ContractsApi.Tests.V1.UseCase
         public async Task UseCaseReturnsAnEmptyListIfGatewayReturnsNull(string paginationToken)
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, PaginationToken = paginationToken};
+            var request = new GetContractsQueryRequest { TargetId = id, PaginationToken = paginationToken };
             var result = new PagedResult<Contract>(null, new PaginationDetails(paginationToken));
             _mockGateway.Setup(x => x.GetContractsByTargetId(request)).ReturnsAsync(result);
 
@@ -68,7 +68,7 @@ namespace ContractsApi.Tests.V1.UseCase
         public async Task UseCaseReturnsAListOfContracts(string paginationToken)
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, PaginationToken = paginationToken};
+            var request = new GetContractsQueryRequest { TargetId = id, PaginationToken = paginationToken };
             var contracts = _fixture.CreateMany<Contract>(5).ToList();
             var result = new PagedResult<Contract>(contracts, new PaginationDetails(paginationToken));
             _mockGateway.Setup(x => x.GetContractsByTargetId(request)).ReturnsAsync(result);

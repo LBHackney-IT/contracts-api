@@ -137,7 +137,7 @@ namespace ContractsApi.Tests.V1.Controllers
         public async Task GetContractsByTargetIdReturnsContractsForATargetId(string paginationToken)
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, PaginationToken = paginationToken};
+            var request = new GetContractsQueryRequest { TargetId = id, PaginationToken = paginationToken };
             var contracts = _fixture.CreateMany<ContractResponseObject>(5).ToList();
             var pagedResult = new PagedResult<ContractResponseObject>(contracts, new PaginationDetails(paginationToken));
 
@@ -156,7 +156,7 @@ namespace ContractsApi.Tests.V1.Controllers
         public async Task GetContractsByTargetIdReturns200OkWithNoResults(string paginationToken)
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, PaginationToken = paginationToken};
+            var request = new GetContractsQueryRequest { TargetId = id, PaginationToken = paginationToken };
             var result = _fixture.Build<PagedResult<ContractResponseObject>>()
                 .With(x => x.Results, new List<ContractResponseObject>()).Create();
 

@@ -56,7 +56,7 @@ namespace ContractsApi.V1.Gateways
                 IndexName = GETCONTRACTSBYTARGETIDINDEX,
                 Limit = pageSize,
                 PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
-                Filter = new QueryFilter(TARGETID,QueryOperator.Equal, query.TargetId)
+                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
             };
 
             queryConfig.Filter.AddCondition("targetType", QueryOperator.Equal, query.TargetType);
@@ -89,7 +89,7 @@ namespace ContractsApi.V1.Gateways
         public async Task<Contract> PostNewContractAsync(ContractDb contract)
         {
             _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for target id {contract.TargetId}");
-           _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
+            _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
             _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for target id {contract.TargetId}");
             var result = await _dynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);

@@ -109,7 +109,7 @@ namespace ContractsApi.Tests.V1.Gateways
         public async Task GetContractsByTargetIdReturnsEmptyIfNoRecords()
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, TargetType = "asset"};
+            var request = new GetContractsQueryRequest { TargetId = id, TargetType = "asset" };
 
             var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
 
@@ -123,7 +123,7 @@ namespace ContractsApi.Tests.V1.Gateways
         public async Task GetContractsByTargetIdReturnsContractsIfFound()
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, TargetType = "asset"};
+            var request = new GetContractsQueryRequest { TargetId = id, TargetType = "asset" };
             var contracts = UpsertContracts(id, 5);
 
             var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
@@ -138,24 +138,27 @@ namespace ContractsApi.Tests.V1.Gateways
         public async Task GetContractsByTargetIdReturnsMultiplePagesOfRecords()
         {
             var id = Guid.NewGuid();
-            var request = new GetContractsQueryRequest {TargetId = id, TargetType = "asset", PageSize = 5};
+            var request = new GetContractsQueryRequest { TargetId = id, TargetType = "asset", PageSize = 5 };
             var contracts = UpsertContracts(id, 9);
-            var expectedFirstPage = contracts.OrderByDescending(x => x.Id).Take(5);
-            var expectedSecondPage = contracts.Except(expectedFirstPage).OrderByDescending(x => x.Id);
+            var expectedResults = contracts.OrderByDescending(x => x.Id);
 
-            var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+            //Dynamo does not bring back results in any order so for this I'd join both results then check
+            var result = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
 
-            response.Should().NotBeNull();
-            response.Results.Should().BeEquivalentTo(expectedFirstPage);
-            response.PaginationDetails.HasNext.Should().BeTrue();
-            response.PaginationDetails.NextToken.Should().NotBeNull();
+            result.Should().NotBeNull();
+            result.PaginationDetails.HasNext.Should().BeTrue();
+            result.PaginationDetails.NextToken.Should().NotBeNull();
 
-            request.PaginationToken = response.PaginationDetails.NextToken;
-            response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
-            response.Should().NotBeNull();
-            response.Results.Should().BeEquivalentTo(expectedSecondPage);
-            response.PaginationDetails.HasNext.Should().BeFalse();
-            response.PaginationDetails.NextToken.Should().BeNull();
+            request.PaginationToken = result.PaginationDetails.NextToken;
+            var result2 = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+            result2.Should().NotBeNull();
+
+            var allRecordsOrdered = result.Results;
+            allRecordsOrdered.AddRange(result2.Results);
+            allRecordsOrdered.OrderByDescending(x => x.Id).Should().BeEquivalentTo(expectedResults);
+
+            result2.PaginationDetails.HasNext.Should().BeFalse();
+            result2.PaginationDetails.NextToken.Should().BeNull();
         }
 
         [Fact]
