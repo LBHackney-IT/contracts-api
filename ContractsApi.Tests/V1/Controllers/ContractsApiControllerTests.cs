@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,11 +12,13 @@ using ContractsApi.V1.Infrastructure;
 using ContractsApi.V1.UseCase.Interfaces;
 using ContractsApi.Tests.V1.Helper;
 using FluentAssertions;
+using Hackney.Core.DynamoDb;
 using Hackney.Core.Http;
 using Hackney.Core.JWT;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
@@ -28,6 +31,7 @@ namespace ContractsApi.Tests.V1.Controllers
     {
         private readonly ContractsApiController _classUnderTest;
         private readonly Mock<IGetContractByIdUseCase> _mockGetByIdUseCase;
+        private readonly Mock<IGetContractsByTargetIdUseCase> _mockGetContractsByTargetIdUseCase;
         private readonly Mock<IPostNewContractUseCase> _mockPostNewContractUseCase;
         private Mock<IPatchContractUseCase> _mockPatchContractUseCase;
         private readonly Mock<ITokenFactory> _mockTokenFactory;
@@ -44,11 +48,12 @@ namespace ContractsApi.Tests.V1.Controllers
         public ContractsApiControllerTests()
         {
             _mockGetByIdUseCase = new Mock<IGetContractByIdUseCase>();
+            _mockGetContractsByTargetIdUseCase = new Mock<IGetContractsByTargetIdUseCase>();
             _mockPostNewContractUseCase = new Mock<IPostNewContractUseCase>();
             _mockPatchContractUseCase = new Mock<IPatchContractUseCase>();
             _mockTokenFactory = new Mock<ITokenFactory>();
             _mockContextWrapper = new Mock<IHttpContextWrapper>();
-            _classUnderTest = new ContractsApiController(_mockGetByIdUseCase.Object, _mockPostNewContractUseCase.Object, _mockPatchContractUseCase.Object,
+            _classUnderTest = new ContractsApiController(_mockGetByIdUseCase.Object, _mockGetContractsByTargetIdUseCase.Object, _mockPostNewContractUseCase.Object, _mockPatchContractUseCase.Object,
                 _mockTokenFactory.Object, _mockContextWrapper.Object);
 
             _mockHttpRequest = new Mock<HttpRequest>();
@@ -123,6 +128,44 @@ namespace ContractsApi.Tests.V1.Controllers
             _classUnderTest.HttpContext.Response.Headers.TryGetValue(HeaderConstants.ETag, out StringValues val)
                 .Should().BeTrue();
             val.First().Should().Be(expectedEtagValue);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public async Task GetContractsByTargetIdReturnsContractsForATargetId(string paginationToken)
+        {
+            var id = Guid.NewGuid();
+            var request = new GetContractsQueryRequest {TargetId = id, PaginationToken = paginationToken};
+            var contracts = _fixture.CreateMany<ContractResponseObject>(5).ToList();
+            var pagedResult = new PagedResult<ContractResponseObject>(contracts, new PaginationDetails(paginationToken));
+
+            _mockGetContractsByTargetIdUseCase.Setup(x => x.Execute(request)).ReturnsAsync(pagedResult);
+
+            var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+
+            response.Should().BeOfType(typeof(OkObjectResult));
+            (response as OkObjectResult).Value.Should().BeEquivalentTo(pagedResult);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("some-value")]
+        public async Task GetContractsByTargetIdReturns200OkWithNoResults(string paginationToken)
+        {
+            var id = Guid.NewGuid();
+            var request = new GetContractsQueryRequest {TargetId = id, PaginationToken = paginationToken};
+            var result = _fixture.Build<PagedResult<ContractResponseObject>>()
+                .With(x => x.Results, new List<ContractResponseObject>()).Create();
+
+            _mockGetContractsByTargetIdUseCase.Setup(x => x.Execute(request)).ReturnsAsync(result);
+
+            var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
+
+            response.Should().BeOfType(typeof(OkObjectResult));
+            (response as OkObjectResult).Value.Should().BeEquivalentTo(result);
         }
 
         [Fact]
