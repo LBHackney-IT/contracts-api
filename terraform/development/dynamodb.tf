@@ -10,6 +10,14 @@ resource "aws_dynamodb_table" "contractsapi_dynamodb_table" {
         type = "S"
     }
 
+    global_secondary_index {
+        name               = "ContractsByTargetId"
+        hash_key           = "targetId"
+        write_capacity     = 10
+        read_capacity      = 10
+        projection_type    = "ALL"
+    }
+
     tags = merge(
         local.default_tags,
         { BackupPolicy = "Dev" }
