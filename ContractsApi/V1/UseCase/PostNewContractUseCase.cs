@@ -30,7 +30,7 @@ namespace ContractsApi.V1.UseCase
             if (contract != null && token != null)
             {
                 var contractSnsMessage = _snsFactory.CreateContract(contract, token);
-                var contractTopicArn = Environment.GetEnvironmentVariable("CONTRACT_SNS_ARN");
+                var contractTopicArn = Environment.GetEnvironmentVariable("CONTRACTS_SNS_ARN");
 
                 await _snsGateway.Publish(contractSnsMessage, contractTopicArn).ConfigureAwait(false);
             }
