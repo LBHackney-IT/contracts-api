@@ -12,6 +12,7 @@ namespace ContractsApi.V1.Factories
             return new Contract
             {
                 Id = contractDb.Id,
+                TargetId = contractDb.TargetId,
                 TargetType = contractDb.TargetType,
                 ContractType = contractDb.ContractType,
                 StartDate = contractDb.StartDate,
@@ -29,6 +30,7 @@ namespace ContractsApi.V1.Factories
             return new ContractDb()
             {
                 Id = contract.Id,
+                TargetId = contract.TargetId,
                 TargetType = contract.TargetType,
                 ContractType = contract.ContractType,
                 StartDate = contract.StartDate,

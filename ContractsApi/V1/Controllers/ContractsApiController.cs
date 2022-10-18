@@ -12,6 +12,7 @@ using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ContractsApi.V1.Infrastructure.Exceptions;
+using Hackney.Core.DynamoDb;
 using HeaderConstants = ContractsApi.V1.Infrastructure.HeaderConstants;
 
 namespace ContractsApi.V1.Controllers
@@ -24,16 +25,18 @@ namespace ContractsApi.V1.Controllers
     public class ContractsApiController : BaseController
     {
         private readonly IGetContractByIdUseCase _getContractByIdUseCase;
+        private readonly IGetContractsByTargetIdUseCase _getContractsByTargetIdUseCase;
         private readonly IPostNewContractUseCase _postNewContractUseCase;
         private readonly IPatchContractUseCase _patchContractUseCase;
         private readonly ITokenFactory _tokenFactory;
         private readonly IHttpContextWrapper _contextWrapper;
 
-        public ContractsApiController(IGetContractByIdUseCase getContractByIdUseCase,
+        public ContractsApiController(IGetContractByIdUseCase getContractByIdUseCase, IGetContractsByTargetIdUseCase getContractsByTargetIdUseCase,
             IPostNewContractUseCase postNewContractUseCase, IPatchContractUseCase patchContractUseCase, ITokenFactory tokenFactory,
             IHttpContextWrapper contextWrapper)
         {
             _getContractByIdUseCase = getContractByIdUseCase;
+            _getContractsByTargetIdUseCase = getContractsByTargetIdUseCase;
             _postNewContractUseCase = postNewContractUseCase;
             _patchContractUseCase = patchContractUseCase;
 
@@ -42,10 +45,10 @@ namespace ContractsApi.V1.Controllers
         }
 
         /// <summary>
-        /// Retrieves the asset with the supplied id
+        /// Retrieves the contract with the supplied id
         /// </summary>
         /// <response code="200">Successfully retrieved details for the specified ID</response>
-        /// <response code="404">No tenure information found for the specified ID</response>
+        /// <response code="404">No contract information found for the specified ID</response>
         /// <response code="500">Internal server error</response>
         [ProducesResponseType(typeof(ContractResponseObject), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -64,6 +67,23 @@ namespace ContractsApi.V1.Controllers
                 eTag = result.VersionNumber.ToString();
 
             HttpContext.Response.Headers.Add(HeaderConstants.ETag, EntityTagHeaderValue.Parse($"\"{eTag}\"").Tag);
+
+            return Ok(result);
+        }
+        /// <summary>
+        /// Retrieves assets with the supplied target id
+        /// </summary>
+        /// <response code="200">Successfully retrieved details for the specified target ID</response>
+        /// <response code="404">No contracts found for the specified target ID</response>
+        /// <response code="500">Internal server error</response>
+        [ProducesResponseType(typeof(PagedResult<ContractResponseObject>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet]
+        [LogCall(LogLevel.Information)]
+        public async Task<IActionResult> GetContractsByTargetId([FromQuery] GetContractsQueryRequest query)
+        {
+            var result = await _getContractsByTargetIdUseCase.Execute(query).ConfigureAwait(false);
 
             return Ok(result);
         }

@@ -14,6 +14,9 @@ namespace ContractsApi.V1.Infrastructure
         public Guid Id { get; set; }
 
         [DynamoDBProperty]
+        public Guid TargetId { get; set; }
+
+        [DynamoDBProperty]
         public string TargetType { get; set; }
 
         [DynamoDBProperty]

@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using Amazon.DynamoDBv2.Model;
 
 namespace ContractsApi.Tests
 {
@@ -18,7 +19,24 @@ namespace ContractsApi.Tests
     {
         private readonly List<TableDef> _tables = new List<TableDef>
         {
-            new TableDef { Name = "Contracts", KeyName = "id", KeyType = ScalarAttributeType.S }
+            new TableDef
+            {
+                Name = "Contracts", KeyName = "id", KeyType = ScalarAttributeType.S,
+                GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
+                {
+                    new GlobalSecondaryIndex
+                    {
+                        IndexName = "ContractsByTargetId",
+                        KeySchema = new List<KeySchemaElement>
+                        {
+                            new KeySchemaElement("targetId", KeyType.HASH),
+                        },
+                        Projection = new Projection { ProjectionType = ProjectionType.ALL },
+                        ProvisionedThroughput = new ProvisionedThroughput(3, 3)
+                    }
+                }
+
+            }
         };
 
         public HttpClient Client { get; private set; }

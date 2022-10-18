@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Amazon.DynamoDBv2.DataModel;
 using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Boundary.Response;
@@ -9,13 +10,19 @@ using Hackney.Core.Logging;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2.DocumentModel;
 using ContractsApi.V1.Infrastructure.Exceptions;
+using Hackney.Core.DynamoDb;
 using Hackney.Core.JWT;
 
 namespace ContractsApi.V1.Gateways
 {
     public class DynamoDbGateway : IContractGateway
     {
+        private const int MAX_RESULTS = 10;
+        private const string GETCONTRACTSBYTARGETIDINDEX = "ContractsByTargetId";
+        private const string TARGETID = "targetId";
+
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly ILogger<DynamoDbGateway> _logger;
         private readonly IEntityUpdater _updater;
@@ -38,13 +45,53 @@ namespace ContractsApi.V1.Gateways
         }
 
         [LogCall]
+        public async Task<PagedResult<Contract>> GetContractsByTargetId(GetContractsQueryRequest query)
+        {
+            var pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
+            var dbContracts = new List<ContractDb>();
+            var table = _dynamoDbContext.GetTargetTable<ContractDb>();
+
+            var queryConfig = new QueryOperationConfig
+            {
+                IndexName = GETCONTRACTSBYTARGETIDINDEX,
+                Limit = pageSize,
+                PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
+                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
+            };
+
+            queryConfig.Filter.AddCondition("targetType", QueryOperator.Equal, query.TargetType);
+
+            var search = table.Query(queryConfig);
+            var resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
+
+            var paginationToken = search.PaginationToken;
+            if (resultsSet.Any())
+            {
+                dbContracts.AddRange(_dynamoDbContext.FromDocuments<ContractDb>(resultsSet));
+
+                if (!string.IsNullOrEmpty(PaginationDetails.EncodeToken(paginationToken)))
+                {
+                    queryConfig.PaginationToken = paginationToken;
+                    queryConfig.Limit = 1;
+                    search = table.Query(queryConfig);
+                    resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
+                    if (!resultsSet.Any())
+                        paginationToken = null;
+                }
+            }
+
+            return new PagedResult<Contract>(dbContracts.Select(x => x.ToDomain()), new PaginationDetails(
+                paginationToken));
+        }
+
+        [LogCall]
 
         public async Task<Contract> PostNewContractAsync(ContractDb contract)
         {
-            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for id {contract.Id}");
+            _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for target id {contract.TargetId}");
             _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
-            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for id {contract.Id}");
+            _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for target id {contract.TargetId}");
             var result = await _dynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
 
             return result.ToDomain();

@@ -13,6 +13,7 @@ namespace ContractsApi.V1.Factories
             return new ContractResponseObject
             {
                 Id = contract.Id,
+                TargetId = contract.TargetId,
                 TargetType = contract.TargetType,
                 ContractType = contract.ContractType,
                 StartDate = contract.StartDate,
@@ -22,6 +23,13 @@ namespace ContractsApi.V1.Factories
                 Charges = contract.Charges.ToList(),
                 VersionNumber = contract.VersionNumber
             };
+        }
+
+        public static List<ContractResponseObject> ToResponse(this IEnumerable<Contract> domainList)
+        {
+            if (domainList is null) return new List<ContractResponseObject>();
+
+            return domainList.Select(domain => domain.ToResponse()).ToList();
         }
     }
 }
