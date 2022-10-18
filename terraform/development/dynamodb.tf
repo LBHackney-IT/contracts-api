@@ -10,6 +10,11 @@ resource "aws_dynamodb_table" "contractsapi_dynamodb_table" {
         type = "S"
     }
 
+    attribute {
+        name = "targetId"
+        type = "S"
+    }
+
     global_secondary_index {
         name               = "ContractsByTargetId"
         hash_key           = "targetId"
