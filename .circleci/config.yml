@@ -271,13 +271,16 @@ workflows:
               only: master
   check-and-deploy-staging-and-production:
        jobs:
+       - check-code-formatting:
+           context: api-nuget-token-context
+           filters:
+             branches:
+               only: release
        - build-and-test:
            context: api-nuget-token-context
            filters:
              branches:
                only: release
-       - permit-staging-terraform-release:
-           type: approval
        - assume-role-staging:
            context: api-assume-role-housing-staging-context
            requires:
