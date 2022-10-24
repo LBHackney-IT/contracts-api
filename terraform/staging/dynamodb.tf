@@ -25,7 +25,7 @@ resource "aws_dynamodb_table" "contractsapi_dynamodb_table" {
 
     tags = merge(
         local.default_tags,
-        { BackupPolicy = "Dev" }
+        { BackupPolicy = "Stg" }
     )
 
     point_in_time_recovery {
