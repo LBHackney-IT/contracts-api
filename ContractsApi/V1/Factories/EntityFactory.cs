@@ -20,7 +20,10 @@ namespace ContractsApi.V1.Factories
                 RenewalDate = contractDb.RenewalDate,
                 RelatedPeople = contractDb.RelatedPeople,
                 Charges = contractDb.Charges,
-                VersionNumber = contractDb.VersionNumber
+                VersionNumber = contractDb.VersionNumber,
+                FundingSource = contractDb.FundingSource,
+                CostCentre = contractDb.CostCentre,
+                LhaArea = contractDb.LhaArea
             };
         }
 
@@ -38,7 +41,10 @@ namespace ContractsApi.V1.Factories
                 RenewalDate = contract.RenewalDate,
                 RelatedPeople = contract.RelatedPeople.ToList(),
                 Charges = contract.Charges.ToList(),
-                VersionNumber = contract.VersionNumber
+                VersionNumber = contract.VersionNumber,
+                FundingSource = contract.FundingSource,
+                CostCentre = contract.CostCentre,
+                LhaArea = contract.LhaArea
             };
         }
     }
