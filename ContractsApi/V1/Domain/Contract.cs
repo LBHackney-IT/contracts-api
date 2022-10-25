@@ -15,5 +15,8 @@ namespace ContractsApi.V1.Domain
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
         public IEnumerable<Charges> Charges { get; set; }
         public int? VersionNumber { get; set; }
+        public string FundingSource { get; set; }
+        public string CostCentre { get; set; }
+        public string LhaArea { get; set; }
     }
 }
