@@ -39,5 +39,11 @@ namespace ContractsApi.V1.Infrastructure
 
         [DynamoDBVersion]
         public int? VersionNumber { get; set; }
+        [DynamoDBProperty]
+        public string FundingSource { get; set; }
+        [DynamoDBProperty]
+        public string CostCentre { get; set; }
+        [DynamoDBProperty]
+        public string LhaArea { get; set; }
     }
 }
