@@ -4,7 +4,7 @@ namespace ContractsApi.V1.Infrastructure
     {
         // JWT TOKEN
         public const string V1_VERSION = "v1";
-        public const string EVENTTYPE = "ContractCreatedEvent";
+        public const string EVENTTYPE = "ContractUpdatedEvent";
         public const string SOURCE_DOMAIN = "Contract";
         public const string SOURCE_SYSTEM = "ContractAPI";
     }
