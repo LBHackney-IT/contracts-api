@@ -21,6 +21,9 @@ namespace ContractsApi.V1.Factories
                 RenewalDate = request.RenewalDate,
                 RelatedPeople = request.RelatedPeople.ToList(),
                 Charges = request.Charges.ToList(),
+                FundingSource = request.FundingSource,
+                CostCentre = request.CostCentre,
+                LhaArea = request.LhaArea,
                 VersionNumber = request.VersionNumber
             };
         }
