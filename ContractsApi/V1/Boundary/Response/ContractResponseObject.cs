@@ -19,5 +19,6 @@ namespace ContractsApi.V1.Boundary.Response
         public string FundingSource { get; set; }
         public string CostCentre { get; set; }
         public string LhaArea { get; set; }
+        public decimal? LhaRate { get; set; }
     }
 }

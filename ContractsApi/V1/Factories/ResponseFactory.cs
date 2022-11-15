@@ -24,6 +24,7 @@ namespace ContractsApi.V1.Factories
                 FundingSource = contract.FundingSource,
                 CostCentre = contract.CostCentre,
                 LhaArea = contract.LhaArea,
+                LhaRate = contract.LhaRate,
                 VersionNumber = contract.VersionNumber
             };
         }
