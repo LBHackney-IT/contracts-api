@@ -45,5 +45,7 @@ namespace ContractsApi.V1.Infrastructure
         public string CostCentre { get; set; }
         [DynamoDBProperty]
         public string LhaArea { get; set; }
+        [DynamoDBProperty]
+        public decimal? LhaRate { get; set; }
     }
 }

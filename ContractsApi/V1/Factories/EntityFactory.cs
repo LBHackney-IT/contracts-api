@@ -23,7 +23,8 @@ namespace ContractsApi.V1.Factories
                 VersionNumber = contractDb.VersionNumber,
                 FundingSource = contractDb.FundingSource,
                 CostCentre = contractDb.CostCentre,
-                LhaArea = contractDb.LhaArea
+                LhaArea = contractDb.LhaArea,
+                LhaRate = contractDb.LhaRate,
             };
         }
 
@@ -44,7 +45,8 @@ namespace ContractsApi.V1.Factories
                 VersionNumber = contract.VersionNumber,
                 FundingSource = contract.FundingSource,
                 CostCentre = contract.CostCentre,
-                LhaArea = contract.LhaArea
+                LhaArea = contract.LhaArea,
+                LhaRate = contract.LhaRate,
             };
         }
     }
