@@ -98,13 +98,13 @@ namespace ContractsApi.V1.Gateways
             if (dupes.Count() > 0)
                 throw new DuplicateChargeException(dupes.First());
 
-            var typeFrequencyDupes = contract.Charges.GroupBy(x => (x.Type, x.Frequency))
+            var typeFrequencyDupes = contract.Charges.GroupBy(x => (x.Type, x.SubType, x.Frequency))
               .Where(g => g.Count() > 1)
               .SelectMany(y => y)
               .ToList();
 
             if (typeFrequencyDupes.Count() > 0)
-                throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().Frequency.ToString());
+                throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().SubType, typeFrequencyDupes.First().Frequency.ToString());
 
             _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
@@ -139,13 +139,13 @@ namespace ContractsApi.V1.Gateways
                 if (dupes.Count() > 0)
                     throw new DuplicateChargeException(dupes.First());
 
-                var typeFrequencyDupes = response.UpdatedEntity.Charges.GroupBy(x => (x.Type, x.Frequency))
+                var typeFrequencyDupes = response.UpdatedEntity.Charges.GroupBy(x => (x.Type, x.SubType, x.Frequency))
                   .Where(g => g.Count() > 1)
                   .SelectMany(y => y)
                   .ToList();
 
                 if (typeFrequencyDupes.Count() > 0)
-                    throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().Frequency.ToString());
+                    throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().SubType, typeFrequencyDupes.First().Frequency.ToString());
 
                 await _dynamoDbContext.SaveAsync(response.UpdatedEntity).ConfigureAwait(false);
             }
