@@ -89,6 +89,23 @@ namespace ContractsApi.V1.Gateways
         public async Task<Contract> PostNewContractAsync(ContractDb contract)
         {
             _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for target id {contract.TargetId}");
+
+            var dupes = contract.Charges.GroupBy(x => x.Id)
+              .Where(g => g.Count() > 1)
+              .Select(y => y.Key)
+              .ToList();
+
+            if (dupes.Count() > 0)
+                throw new DuplicateChargeException(dupes.First());
+
+            var typeFrequencyDupes = contract.Charges.GroupBy(x => (x.Type, x.SubType, x.Frequency))
+              .Where(g => g.Count() > 1)
+              .SelectMany(y => y)
+              .ToList();
+
+            if (typeFrequencyDupes.Count() > 0)
+                throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().SubType, typeFrequencyDupes.First().Frequency.ToString());
+
             _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
             _logger.LogDebug($"Calling IDynamoDBContext.LoadAsync for target id {contract.TargetId}");
@@ -113,6 +130,23 @@ namespace ContractsApi.V1.Gateways
             if (response.NewValues.Any())
             {
                 _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync to update id {id}");
+
+                var dupes = response.UpdatedEntity.Charges.GroupBy(x => x.Id)
+                  .Where(g => g.Count() > 1)
+                  .Select(y => y.Key)
+                  .ToList();
+
+                if (dupes.Count() > 0)
+                    throw new DuplicateChargeException(dupes.First());
+
+                var typeFrequencyDupes = response.UpdatedEntity.Charges.GroupBy(x => (x.Type, x.SubType, x.Frequency))
+                  .Where(g => g.Count() > 1)
+                  .SelectMany(y => y)
+                  .ToList();
+
+                if (typeFrequencyDupes.Count() > 0)
+                    throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().SubType, typeFrequencyDupes.First().Frequency.ToString());
+
                 await _dynamoDbContext.SaveAsync(response.UpdatedEntity).ConfigureAwait(false);
             }
 

@@ -30,7 +30,7 @@ namespace ContractsApi.V1.UseCase
             var result = await _gateway.PatchContract(id, contract, requestBody, ifMatch);
             if (result == null) return null;
 
-            if (result.NewValues.Any())
+            if (result.NewValues.Any() && token != null)
             {
                 var contractSnsMessage = _snsFactory.UpdateContract(result, token);
                 var contractTopicArn = Environment.GetEnvironmentVariable("CONTRACTS_SNS_ARN");
