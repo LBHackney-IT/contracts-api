@@ -12,6 +12,7 @@ namespace ContractsApi.V1.Boundary.Requests
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? RenewalDate { get; set; }
+        public DateTime? ApprovalDate { get; set; }
         public List<RelatedPeople> RelatedPeople { get; set; }
         public List<Charges> Charges { get; set; }
         public int? VersionNumber { get; set; }

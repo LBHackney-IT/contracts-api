@@ -27,7 +27,8 @@ namespace ContractsApi.V1.Factories
                 LhaRate = contractDb.LhaRate,
                 IsActive = contractDb.IsActive,
                 IsVATRegistered = contractDb.IsVATRegistered,
-                Stage = contractDb.Stage
+                Stage = contractDb.Stage,
+                ApprovalDate = contractDb.ApprovalDate
             };
         }
 
@@ -52,7 +53,8 @@ namespace ContractsApi.V1.Factories
                 LhaRate = contract.LhaRate,
                 IsActive = contract.IsActive,
                 IsVATRegistered = contract.IsVATRegistered,
-                Stage = contract.Stage
+                Stage = contract.Stage,
+                ApprovalDate = contract.ApprovalDate
             };
         }
     }
