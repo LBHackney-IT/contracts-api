@@ -25,6 +25,9 @@ namespace ContractsApi.V1.Factories
                 CostCentre = contractDb.CostCentre,
                 LhaArea = contractDb.LhaArea,
                 LhaRate = contractDb.LhaRate,
+                IsActive = contractDb.IsActive,
+                IsVATRegistered = contractDb.IsVATRegistered,
+                Stage = contractDb.Stage
             };
         }
 
@@ -47,6 +50,9 @@ namespace ContractsApi.V1.Factories
                 CostCentre = contract.CostCentre,
                 LhaArea = contract.LhaArea,
                 LhaRate = contract.LhaRate,
+                IsActive = contract.IsActive,
+                IsVATRegistered = contract.IsVATRegistered,
+                Stage = contract.Stage
             };
         }
     }

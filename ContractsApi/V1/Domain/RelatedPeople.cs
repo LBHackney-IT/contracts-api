@@ -12,5 +12,6 @@ namespace ContractsApi.V1.Domain
         public bool? IsResponsible { get; set; }
         public string Description { get; set; }
         public string Phone { get; set; }
+        public string RelatedId { get; set; }
     }
 }

@@ -25,6 +25,9 @@ namespace ContractsApi.V1.Factories
                 CostCentre = contract.CostCentre,
                 LhaArea = contract.LhaArea,
                 LhaRate = contract.LhaRate,
+                IsActive = contract.IsActive,
+                IsVATRegistered = contract.IsVATRegistered,
+                Stage = contract.Stage,
                 VersionNumber = contract.VersionNumber
             };
         }

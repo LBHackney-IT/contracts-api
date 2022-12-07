@@ -47,5 +47,11 @@ namespace ContractsApi.V1.Infrastructure
         public string LhaArea { get; set; }
         [DynamoDBProperty]
         public decimal? LhaRate { get; set; }
+        [DynamoDBProperty]
+        public bool? IsActive { get; set; }
+        [DynamoDBProperty]
+        public bool? IsVATRegistered { get; set; }
+        [DynamoDBProperty]
+        public int? Stage { get; set; }
     }
 }

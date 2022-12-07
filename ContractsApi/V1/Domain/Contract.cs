@@ -12,6 +12,7 @@ namespace ContractsApi.V1.Domain
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? RenewalDate { get; set; }
+        public DateTime? ApprovalDate { get; set; }
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
         public IEnumerable<Charges> Charges { get; set; }
         public int? VersionNumber { get; set; }
@@ -19,5 +20,9 @@ namespace ContractsApi.V1.Domain
         public string CostCentre { get; set; }
         public string LhaArea { get; set; }
         public decimal? LhaRate { get; set; }
+        public bool? IsActive { get; set; }
+        public bool? IsVATRegistered { get; set; }
+        public int? Stage { get; set; }
+
     }
 }
