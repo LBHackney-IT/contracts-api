@@ -29,6 +29,7 @@ namespace ContractsApi.V1.Factories
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
                 ApprovalDate = contract.ApprovalDate,
+                TenureType = contract.TenureType,
                 VersionNumber = contract.VersionNumber
             };
         }

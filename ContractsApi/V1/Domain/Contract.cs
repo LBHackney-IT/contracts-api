@@ -23,6 +23,6 @@ namespace ContractsApi.V1.Domain
         public bool? IsActive { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
-
+        public TenureType TenureType { get; set; }
     }
 }

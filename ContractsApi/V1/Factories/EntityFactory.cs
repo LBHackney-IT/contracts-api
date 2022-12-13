@@ -28,7 +28,8 @@ namespace ContractsApi.V1.Factories
                 IsActive = contractDb.IsActive,
                 IsVATRegistered = contractDb.IsVATRegistered,
                 Stage = contractDb.Stage,
-                ApprovalDate = contractDb.ApprovalDate
+                ApprovalDate = contractDb.ApprovalDate,
+                TenureType = contractDb.TenureType
             };
         }
 
@@ -54,7 +55,8 @@ namespace ContractsApi.V1.Factories
                 IsActive = contract.IsActive,
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
-                ApprovalDate = contract.ApprovalDate
+                ApprovalDate = contract.ApprovalDate,
+                TenureType = contract.TenureType
             };
         }
     }

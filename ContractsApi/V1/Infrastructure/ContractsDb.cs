@@ -56,5 +56,7 @@ namespace ContractsApi.V1.Infrastructure
         public bool? IsVATRegistered { get; set; }
         [DynamoDBProperty]
         public int? Stage { get; set; }
+        [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<TenureType>))]
+        public TenureType TenureType { get; set; }
     }
 }
