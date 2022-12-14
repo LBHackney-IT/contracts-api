@@ -31,6 +31,9 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? RenewalDate { get; set; }
 
+        [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
+        public DateTime? ApprovalDate { get; set; }
+
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectListConverter<RelatedPeople>))]
         public List<RelatedPeople> RelatedPeople { get; set; } = new List<RelatedPeople>();
 
@@ -47,5 +50,11 @@ namespace ContractsApi.V1.Infrastructure
         public string LhaArea { get; set; }
         [DynamoDBProperty]
         public decimal? LhaRate { get; set; }
+        [DynamoDBProperty]
+        public bool? IsActive { get; set; }
+        [DynamoDBProperty]
+        public bool? IsVATRegistered { get; set; }
+        [DynamoDBProperty]
+        public int? Stage { get; set; }
     }
 }
