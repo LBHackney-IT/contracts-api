@@ -37,7 +37,7 @@ namespace ContractsApi.V1.Factories
                 SelfBillingAgreementLinkToGoogleDrive = contractDb.SelfBillingAgreementLinkToGoogleDrive,
                 OptionToTax = contractDb.OptionToTax,
                 OptionToTaxLinkToGoogleDrive = contractDb.OptionToTaxLinkToGoogleDrive,
-                Rates= contractDb.Rates
+                Rates = contractDb.Rates
             };
         }
 
@@ -64,10 +64,10 @@ namespace ContractsApi.V1.Factories
                 IsActive = contract.IsActive,
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
-                VATRegistrationNumber= contract.VATRegistrationNumber,
+                VATRegistrationNumber = contract.VATRegistrationNumber,
                 ReviewDate = contract.ReviewDate,
-                ExtensionDate= contract.ExtensionDate,
-                ReasonForExtensionDate= contract.ReasonForExtensionDate,
+                ExtensionDate = contract.ExtensionDate,
+                ReasonForExtensionDate = contract.ReasonForExtensionDate,
                 SelfBillingAgreement = contract.SelfBillingAgreement,
                 SelfBillingAgreementLinkToGoogleDrive = contract.SelfBillingAgreementLinkToGoogleDrive,
                 OptionToTax = contract.OptionToTax,
