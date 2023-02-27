@@ -18,6 +18,7 @@ namespace ContractsApi.V1.Factories
                 StartDate = contractDb.StartDate,
                 EndDate = contractDb.EndDate,
                 RenewalDate = contractDb.RenewalDate,
+                ApprovalDate = contractDb.ApprovalDate,
                 RelatedPeople = contractDb.RelatedPeople,
                 Charges = contractDb.Charges,
                 VersionNumber = contractDb.VersionNumber,
@@ -28,7 +29,15 @@ namespace ContractsApi.V1.Factories
                 IsActive = contractDb.IsActive,
                 IsVATRegistered = contractDb.IsVATRegistered,
                 Stage = contractDb.Stage,
-                ApprovalDate = contractDb.ApprovalDate
+                VATRegistrationNumber = contractDb.VATRegistrationNumber,
+                ReviewDate = contractDb.ReviewDate,
+                ExtensionDate = contractDb.ExtensionDate,
+                ReasonForExtensionDate = contractDb.ReasonForExtensionDate,
+                SelfBillingAgreement = contractDb.SelfBillingAgreement,
+                SelfBillingAgreementLinkToGoogleDrive = contractDb.SelfBillingAgreementLinkToGoogleDrive,
+                OptionToTax = contractDb.OptionToTax,
+                OptionToTaxLinkToGoogleDrive = contractDb.OptionToTaxLinkToGoogleDrive,
+                Rates = contractDb.Rates
             };
         }
 
@@ -44,6 +53,7 @@ namespace ContractsApi.V1.Factories
                 StartDate = contract.StartDate,
                 EndDate = contract.EndDate,
                 RenewalDate = contract.RenewalDate,
+                ApprovalDate = contract.ApprovalDate,
                 RelatedPeople = contract.RelatedPeople.ToList(),
                 Charges = contract.Charges.ToList(),
                 VersionNumber = contract.VersionNumber,
@@ -54,7 +64,15 @@ namespace ContractsApi.V1.Factories
                 IsActive = contract.IsActive,
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
-                ApprovalDate = contract.ApprovalDate
+                VATRegistrationNumber = contract.VATRegistrationNumber,
+                ReviewDate = contract.ReviewDate,
+                ExtensionDate = contract.ExtensionDate,
+                ReasonForExtensionDate = contract.ReasonForExtensionDate,
+                SelfBillingAgreement = contract.SelfBillingAgreement,
+                SelfBillingAgreementLinkToGoogleDrive = contract.SelfBillingAgreementLinkToGoogleDrive,
+                OptionToTax = contract.OptionToTax,
+                OptionToTaxLinkToGoogleDrive = contract.OptionToTaxLinkToGoogleDrive,
+                Rates = contract.Rates
             };
         }
     }

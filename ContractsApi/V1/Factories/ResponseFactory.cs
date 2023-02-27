@@ -29,7 +29,16 @@ namespace ContractsApi.V1.Factories
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
                 ApprovalDate = contract.ApprovalDate,
-                VersionNumber = contract.VersionNumber
+                VersionNumber = contract.VersionNumber,
+                VATRegistrationNumber = contract.VATRegistrationNumber,
+                ReviewDate = contract.ReviewDate,
+                ExtensionDate = contract.ExtensionDate,
+                ReasonForExtensionDate = contract.ReasonForExtensionDate,
+                SelfBillingAgreement = contract.SelfBillingAgreement,
+                SelfBillingAgreementLinkToGoogleDrive = contract.SelfBillingAgreementLinkToGoogleDrive,
+                OptionToTax = contract.OptionToTax,
+                OptionToTaxLinkToGoogleDrive = contract.OptionToTaxLinkToGoogleDrive,
+                Rates = contract.Rates
             };
         }
 
