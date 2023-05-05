@@ -38,7 +38,8 @@ namespace ContractsApi.V1.Factories
                 SelfBillingAgreementLinkToGoogleDrive = contract.SelfBillingAgreementLinkToGoogleDrive,
                 OptionToTax = contract.OptionToTax,
                 OptionToTaxLinkToGoogleDrive = contract.OptionToTaxLinkToGoogleDrive,
-                Rates = contract.Rates
+                Rates = contract.Rates,
+                DefaultTenureType = contract.DefaultTenureType
             };
         }
 
