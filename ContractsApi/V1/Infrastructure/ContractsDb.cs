@@ -73,7 +73,7 @@ namespace ContractsApi.V1.Infrastructure
         public string OptionToTaxLinkToGoogleDrive { get; set; }
         [DynamoDBProperty]
         public Frequency Rates { get; set; }
-        
+
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<TenureType>))]
         public TenureType DefaultTenureType { get; set; }
     }
