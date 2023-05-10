@@ -2,7 +2,6 @@ using Amazon.DynamoDBv2.DataModel;
 using Hackney.Core.DynamoDb.Converters;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using ContractsApi.V1.Domain;
 
 namespace ContractsApi.V1.Infrastructure
@@ -74,5 +73,8 @@ namespace ContractsApi.V1.Infrastructure
         public string OptionToTaxLinkToGoogleDrive { get; set; }
         [DynamoDBProperty]
         public Frequency Rates { get; set; }
+
+        [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<TenureType>))]
+        public TenureType DefaultTenureType { get; set; }
     }
 }

@@ -33,5 +33,6 @@ namespace ContractsApi.V1.Boundary.Response
         public bool? OptionToTax { get; set; }
         public string OptionToTaxLinkToGoogleDrive { get; set; }
         public Frequency Rates { get; set; }
+        public TenureType DefaultTenureType { get; set; }
     }
 }
