@@ -243,32 +243,32 @@ workflows:
             - build-and-test
           filters:
             branches:
-              only: master
+              only: HT20-579
       - terraform-init-and-plan-development:
           requires:
             - assume-role-development
           filters:
             branches:
-              only: master
+              only: HT20-579
       - terraform-compliance-development:
           requires:
             - terraform-init-and-plan-development
           filters:
             branches:
-              only: master
+              only: HT20-579
       - terraform-apply-development:
           requires:
             - terraform-compliance-development
           filters:
             branches:
-              only: master
+              only: HT20-579
       - deploy-to-development:
           context: api-nuget-token-context
           requires:
             - terraform-apply-development
           filters:
             branches:
-              only: master
+              only: HT20-579
   check-and-deploy-staging-and-production:
        jobs:
        - check-code-formatting:
