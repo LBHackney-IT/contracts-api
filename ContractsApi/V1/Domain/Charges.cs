@@ -9,6 +9,6 @@ namespace ContractsApi.V1.Domain
         public string SubType { get; set; }
         public Frequency Frequency { get; set; }
         public decimal? Amount { get; set; }
-        public string VATrate {get; set;}
+        public string VATrate { get; set; }
     }
 }
