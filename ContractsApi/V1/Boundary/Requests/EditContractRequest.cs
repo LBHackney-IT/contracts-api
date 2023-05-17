@@ -13,7 +13,6 @@ namespace ContractsApi.V1.Boundary.Requests
         public DateTime? ApprovalDate { get; set; }
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
         public IEnumerable<Charges> Charges { get; set; }
-        public string FundingSource { get; set; }
         public string CostCentre { get; set; }
         public string LhaArea { get; set; }
         public decimal? LhaRate { get; set; }
