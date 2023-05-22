@@ -54,14 +54,14 @@ resource "aws_ssm_parameter" "contracts_sns_arn" {
     value = aws_sns_topic.contracts.arn
 }
 
-module "contracts_api_cloudwatch_dashboard" {
+/*module "contracts_api_cloudwatch_dashboard" {
     source              = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/cloudwatch/dashboards/api-dashboard"
     environment_name    = var.environment_name
     api_name            = "contracts-api"
     sns_topic_name      = aws_sns_topic.contracts.name
     dynamodb_table_name = aws_dynamodb_table.contractsapi_dynamodb_table.name
     include_sns_widget  = false
-}
+}*/
 
 data "aws_ssm_parameter" "cloudwatch_topic_arn" {
     name = "/housing-tl/${var.environment_name}/cloudwatch-alarms-topic-arn"
