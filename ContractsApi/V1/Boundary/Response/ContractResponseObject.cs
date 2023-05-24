@@ -17,7 +17,6 @@ namespace ContractsApi.V1.Boundary.Response
         public List<RelatedPeople> RelatedPeople { get; set; }
         public List<Charges> Charges { get; set; }
         public int? VersionNumber { get; set; }
-        public string FundingSource { get; set; }
         public string CostCentre { get; set; }
         public string LhaArea { get; set; }
         public decimal? LhaRate { get; set; }
