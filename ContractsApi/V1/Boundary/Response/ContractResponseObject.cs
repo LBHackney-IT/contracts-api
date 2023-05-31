@@ -23,7 +23,7 @@ namespace ContractsApi.V1.Boundary.Response
         public bool? IsActive { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
-        public string VATRegistrationNumber { get; set; }
+        public string VatRegistrationNumber { get; set; }
         public DateTime? ReviewDate { get; set; }
         public DateTime? ExtensionDate { get; set; }
         public string ReasonForExtensionDate { get; set; }
