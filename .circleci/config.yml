@@ -243,32 +243,32 @@ workflows:
             - build-and-test
           filters:
             branches:
-              only: feature/HT20-575-add-supplier-address
+              only: master
       - terraform-init-and-plan-development:
           requires:
             - assume-role-development
           filters:
             branches:
-              only: feature/HT20-575-add-supplier-address
+              only: master
       - terraform-compliance-development:
           requires:
             - terraform-init-and-plan-development
           filters:
             branches:
-              only: feature/HT20-575-add-supplier-address
+              only: master
       - terraform-apply-development:
           requires:
             - terraform-compliance-development
           filters:
             branches:
-              only: feature/HT20-575-add-supplier-address
+              only: master
       - deploy-to-development:
           context: api-nuget-token-context
           requires:
             - terraform-apply-development
           filters:
             branches:
-              only: feature/HT20-575-add-supplier-address
+              only: master
   check-and-deploy-staging-and-production:
        jobs:
        - check-code-formatting:
