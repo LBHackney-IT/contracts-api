@@ -54,7 +54,7 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty]
         public int? Stage { get; set; }
         [DynamoDBProperty]
-        public string VATRegistrationNumber { get; set; }
+        public string VatRegistrationNumber { get; set; }
         [DynamoDBProperty]
         public DateTime? ReviewDate { get; set; }
         [DynamoDBProperty]
