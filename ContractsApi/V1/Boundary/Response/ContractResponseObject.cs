@@ -10,6 +10,7 @@ namespace ContractsApi.V1.Boundary.Response
         public Guid TargetId { get; set; }
         public string TargetType { get; set; }
         public string ContractType { get; set; }
+        public string ContractNumber { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? RenewalDate { get; set; }

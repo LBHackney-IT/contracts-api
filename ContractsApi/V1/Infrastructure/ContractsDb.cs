@@ -21,6 +21,9 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty]
         public string ContractType { get; set; }
 
+        [DynamoDBProperty]
+        public string ContractNumber { get; set; }
+
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? StartDate { get; set; }
 
