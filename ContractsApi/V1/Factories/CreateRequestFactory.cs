@@ -29,7 +29,7 @@ namespace ContractsApi.V1.Factories
                 Stage = request.Stage,
                 ApprovalDate = request.ApprovalDate,
                 VersionNumber = request.VersionNumber,
-                VATRegistrationNumber = request.VATRegistrationNumber,
+                VatRegistrationNumber = request.VatRegistrationNumber,
                 ReviewDate = request.ReviewDate,
                 ExtensionDate = request.ExtensionDate,
                 ReasonForExtensionDate = request.ReasonForExtensionDate,

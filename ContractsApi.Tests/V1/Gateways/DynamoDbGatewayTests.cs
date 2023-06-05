@@ -221,7 +221,7 @@ namespace ContractsApi.Tests.V1.Gateways
                 await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion)
                     .ConfigureAwait(false);
 
-            func.Should().Throw<VersionNumberConflictException>().WithMessage($"The version number supplied ({suppliedVersion}) does not match the current value on the entity ({0}).");
+            await func.Should().ThrowAsync<VersionNumberConflictException>().WithMessage($"The version number supplied ({suppliedVersion}) does not match the current value on the entity ({0}).");
             _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}", Times.Never());
         }
 
