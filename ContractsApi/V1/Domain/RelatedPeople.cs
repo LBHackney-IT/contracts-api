@@ -13,5 +13,6 @@ namespace ContractsApi.V1.Domain
         public string Description { get; set; }
         public string Phone { get; set; }
         public string RelatedId { get; set; }
+        public string Address { get; set; }
     }
 }
