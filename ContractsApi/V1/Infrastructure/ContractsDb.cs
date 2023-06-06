@@ -77,5 +77,9 @@ namespace ContractsApi.V1.Infrastructure
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<TenureType>))]
         public TenureType DefaultTenureType { get; set; }
+        [DynamoDBProperty]
+        public DateTime? SuspensionDate { get; set; }
+        [DynamoDBProperty]
+        public string ReasonForSuspensionDate { get; set; }
     }
 }
