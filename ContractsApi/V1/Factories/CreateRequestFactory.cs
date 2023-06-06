@@ -39,7 +39,9 @@ namespace ContractsApi.V1.Factories
                 OptionToTax = request.OptionToTax,
                 OptionToTaxLinkToGoogleDrive = request.OptionToTaxLinkToGoogleDrive,
                 Rates = request.Rates,
-                DefaultTenureType = request.DefaultTenureType
+                DefaultTenureType = request.DefaultTenureType,
+                SuspensionDate = request.SuspensionDate,
+                ReasonForSuspensionDate = request.ReasonForSuspensionDate
             };
         }
     }

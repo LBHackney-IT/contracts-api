@@ -34,5 +34,7 @@ namespace ContractsApi.V1.Boundary.Response
         public string OptionToTaxLinkToGoogleDrive { get; set; }
         public Frequency Rates { get; set; }
         public TenureType DefaultTenureType { get; set; }
+        public DateTime? SuspensionDate { get; set; }
+        public string ReasonForSuspensionDate { get; set; }
     }
 }
