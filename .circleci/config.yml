@@ -243,32 +243,32 @@ workflows:
             - build-and-test
           filters:
             branches:
-              only: master
+              only: feature/HT20-706-udprn-create-contract
       - terraform-init-and-plan-development:
           requires:
             - assume-role-development
           filters:
             branches:
-              only: master
+              only: feature/HT20-706-udprn-create-contract
       - terraform-compliance-development:
           requires:
             - terraform-init-and-plan-development
           filters:
             branches:
-              only: master
+              only: feature/HT20-706-udprn-create-contract
       - terraform-apply-development:
           requires:
             - terraform-compliance-development
           filters:
             branches:
-              only: master
+              only: feature/HT20-706-udprn-create-contract
       - deploy-to-development:
           context: api-nuget-token-context
           requires:
             - terraform-apply-development
           filters:
             branches:
-              only: master
+              only: feature/HT20-706-udprn-create-contract
   check-and-deploy-staging-and-production:
        jobs:
        - check-code-formatting:
