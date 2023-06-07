@@ -44,7 +44,7 @@ namespace ContractsApi.V1.Gateways
             return result?.ToDomain();
         }
 
-        [LogCall]    
+        [LogCall]
         public async Task<PagedResult<Contract>> GetContractsByTargetId(GetContractsQueryRequest query)
         {
             var pageSize = query.PageSize.HasValue ? query.PageSize.Value : MAX_RESULTS;
@@ -127,8 +127,8 @@ namespace ContractsApi.V1.Gateways
                 throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().SubType, typeFrequencyDupes.First().Frequency.ToString());
 
             var latestContractNumber = await GetLatestContractNumber(contract.TargetId, contract.TargetType);
-            var newContractNumber = latestContractNumber == null ? 1 : (latestContractNumber + 1);
-            contract.ContractNumber = $"{contract.Uprn}N{newContractNumber}";
+            var newContractNumber = latestContractNumber == null ? 1 : (int) (latestContractNumber + 1);
+            contract.TargetContractNumber = newContractNumber;
 
             _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 

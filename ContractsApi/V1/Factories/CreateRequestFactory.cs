@@ -17,7 +17,6 @@ namespace ContractsApi.V1.Factories
                 TargetType = request.TargetType,
                 Uprn = request.Uprn,
                 ContractType = request.ContractType,
-                ContractNumber = request.ContractNumber,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
                 RenewalDate = request.RenewalDate,
