@@ -14,6 +14,7 @@ namespace ContractsApi.V1.Factories
                 Id = contractDb.Id,
                 TargetId = contractDb.TargetId,
                 TargetType = contractDb.TargetType,
+                TargetContractNumber = contractDb.TargetContractNumber,
                 ContractType = contractDb.ContractType,
                 ContractNumber = contractDb.ContractNumber,
                 StartDate = contractDb.StartDate,

@@ -8,6 +8,7 @@ namespace ContractsApi.V1.Domain
         public Guid Id { get; set; }
         public Guid TargetId { get; set; }
         public string TargetType { get; set; }
+        public int TargetContractNumber { get; set; }
         public string ContractType { get; set; }
         public string ContractNumber { get; set; }
         public DateTime? StartDate { get; set; }

@@ -15,6 +15,7 @@ namespace ContractsApi.V1.Factories
                 Id = Guid.NewGuid(),
                 TargetId = request.TargetId,
                 TargetType = request.TargetType,
+                Uprn = request.Uprn,
                 ContractType = request.ContractType,
                 ContractNumber = request.ContractNumber,
                 StartDate = request.StartDate,
