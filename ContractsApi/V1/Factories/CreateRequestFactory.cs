@@ -23,7 +23,7 @@ namespace ContractsApi.V1.Factories
                 RelatedPeople = request.RelatedPeople.ToList(),
                 Charges = request.Charges.ToList(),
                 CostCentre = request.CostCentre,
-                BRMArea = request.BRMArea,
+                Brma = request.Brma,
                 IsActive = request.IsActive,
                 IsVATRegistered = request.IsVATRegistered,
                 Stage = request.Stage,

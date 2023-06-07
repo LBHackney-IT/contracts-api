@@ -47,7 +47,7 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty]
         public string CostCentre { get; set; }
         [DynamoDBProperty]
-        public string BRMArea { get; set; }
+        public string Brma { get; set; }
         [DynamoDBProperty]
         public bool? IsActive { get; set; }
         [DynamoDBProperty]

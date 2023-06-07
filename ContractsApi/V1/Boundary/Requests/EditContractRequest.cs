@@ -15,7 +15,7 @@ namespace ContractsApi.V1.Boundary.Requests
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
         public IEnumerable<Charges> Charges { get; set; }
         public string CostCentre { get; set; }
-        public string BRMArea { get; set; }
+        public string Brma { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
