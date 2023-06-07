@@ -127,8 +127,8 @@ namespace ContractsApi.V1.Gateways
                 throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().SubType, typeFrequencyDupes.First().Frequency.ToString());
 
             var latestContractNumber = await GetLatestContractNumber(contract.TargetId, contract.TargetType);
-            var resolvedContractNumber = latestContractNumber ?? 1;
-            contract.ContractNumber = $"{contract.Uprn}N{resolvedContractNumber}";
+            var newContractNumber = latestContractNumber == null ? 1 : (latestContractNumber + 1);
+            contract.ContractNumber = $"{contract.Uprn}N{newContractNumber}";
 
             _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
