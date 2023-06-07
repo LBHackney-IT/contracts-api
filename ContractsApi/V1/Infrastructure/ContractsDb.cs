@@ -19,10 +19,13 @@ namespace ContractsApi.V1.Infrastructure
         public string TargetType { get; set; }
 
         [DynamoDBProperty]
-        public string ContractType { get; set; }
+        public string Uprn { get; set; }
 
         [DynamoDBProperty]
-        public string ContractNumber { get; set; }
+        public int TargetContractNumber { get; set; }
+
+        [DynamoDBProperty]
+        public string ContractType { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? StartDate { get; set; }

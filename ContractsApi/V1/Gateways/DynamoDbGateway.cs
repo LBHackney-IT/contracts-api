@@ -56,7 +56,8 @@ namespace ContractsApi.V1.Gateways
                 IndexName = GETCONTRACTSBYTARGETIDINDEX,
                 Limit = pageSize,
                 PaginationToken = PaginationDetails.DecodeToken(query.PaginationToken),
-                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId)
+                Filter = new QueryFilter(TARGETID, QueryOperator.Equal, query.TargetId),
+                BackwardSearch = !query.SortAscending
             };
 
             queryConfig.Filter.AddCondition("targetType", QueryOperator.Equal, query.TargetType);
@@ -84,11 +85,30 @@ namespace ContractsApi.V1.Gateways
                 paginationToken));
         }
 
+        private async Task<int?> GetLatestContractNumber(Guid targetId, string targetType)
+        {
+            var newestContracts = await GetContractsByTargetId(
+                new GetContractsQueryRequest
+                {
+                    TargetId = targetId,
+                    TargetType = targetType,
+                    PageSize = 1
+                }
+            );
+            var newestContract = newestContracts?.Results?.FirstOrDefault();
+            return newestContract?.TargetContractNumber;
+        }
+
         [LogCall]
 
         public async Task<Contract> PostNewContractAsync(ContractDb contract)
         {
             _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for target id {contract.TargetId}");
+
+            if (string.IsNullOrWhiteSpace(contract.Uprn))
+            {
+                throw new ArgumentException($"{nameof(contract.Uprn)} cannot be empty");
+            }
 
             var dupes = contract.Charges.GroupBy(x => x.Id)
               .Where(g => g.Count() > 1)
@@ -105,6 +125,10 @@ namespace ContractsApi.V1.Gateways
 
             if (typeFrequencyDupes.Count() > 0)
                 throw new DuplicateChargeFrequencyAndType(typeFrequencyDupes.First().Type, typeFrequencyDupes.First().SubType, typeFrequencyDupes.First().Frequency.ToString());
+
+            var latestContractNumber = await GetLatestContractNumber(contract.TargetId, contract.TargetType);
+            var newContractNumber = latestContractNumber == null ? 1 : (int) (latestContractNumber + 1);
+            contract.TargetContractNumber = newContractNumber;
 
             _dynamoDbContext.SaveAsync(contract).GetAwaiter().GetResult();
 
