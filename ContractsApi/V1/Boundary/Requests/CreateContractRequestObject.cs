@@ -18,8 +18,7 @@ namespace ContractsApi.V1.Boundary.Requests
         public List<Charges> Charges { get; set; }
         public int? VersionNumber { get; set; }
         public string CostCentre { get; set; }
-        public string LhaArea { get; set; }
-        public decimal? LhaRate { get; set; }
+        public string Brma { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
