@@ -19,6 +19,12 @@ namespace ContractsApi.V1.Infrastructure
         public string TargetType { get; set; }
 
         [DynamoDBProperty]
+        public string Uprn { get; set; }
+
+        [DynamoDBProperty]
+        public int TargetContractNumber { get; set; }
+
+        [DynamoDBProperty]
         public string ContractType { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
@@ -44,9 +50,7 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty]
         public string CostCentre { get; set; }
         [DynamoDBProperty]
-        public string LhaArea { get; set; }
-        [DynamoDBProperty]
-        public decimal? LhaRate { get; set; }
+        public string Brma { get; set; }
         [DynamoDBProperty]
         public bool? IsActive { get; set; }
         [DynamoDBProperty]
@@ -74,5 +78,9 @@ namespace ContractsApi.V1.Infrastructure
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<TenureType>))]
         public TenureType DefaultTenureType { get; set; }
+        [DynamoDBProperty]
+        public DateTime? SuspensionDate { get; set; }
+        [DynamoDBProperty]
+        public string ReasonForSuspensionDate { get; set; }
     }
 }

@@ -14,10 +14,16 @@ resource "aws_dynamodb_table" "contractsapi_dynamodb_table" {
         name = "targetId"
         type = "S"
     }
+	
+	attribute {
+		name = "targetContractNumber"
+		type = "N"
+	}		
 
     global_secondary_index {
         name               = "ContractsByTargetId"
         hash_key           = "targetId"
+		range_key          = "targetContractNumber"
         write_capacity     = 10
         read_capacity      = 10
         projection_type    = "ALL"

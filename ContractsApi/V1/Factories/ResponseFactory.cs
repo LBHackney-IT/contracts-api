@@ -16,14 +16,14 @@ namespace ContractsApi.V1.Factories
                 TargetId = contract.TargetId,
                 TargetType = contract.TargetType,
                 ContractType = contract.ContractType,
+                ContractNumber = contract.ContractNumber,
                 StartDate = contract.StartDate,
                 EndDate = contract.EndDate,
                 RenewalDate = contract.RenewalDate,
                 RelatedPeople = contract.RelatedPeople.ToList(),
                 Charges = contract.Charges.ToList(),
                 CostCentre = contract.CostCentre,
-                LhaArea = contract.LhaArea,
-                LhaRate = contract.LhaRate,
+                Brma = contract.Brma,
                 IsActive = contract.IsActive,
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
@@ -38,7 +38,9 @@ namespace ContractsApi.V1.Factories
                 OptionToTax = contract.OptionToTax,
                 OptionToTaxLinkToGoogleDrive = contract.OptionToTaxLinkToGoogleDrive,
                 Rates = contract.Rates,
-                DefaultTenureType = contract.DefaultTenureType
+                DefaultTenureType = contract.DefaultTenureType,
+                SuspensionDate = contract.SuspensionDate,
+                ReasonForSuspensionDate = contract.ReasonForSuspensionDate
             };
         }
 

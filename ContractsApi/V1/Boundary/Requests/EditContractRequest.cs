@@ -14,8 +14,7 @@ namespace ContractsApi.V1.Boundary.Requests
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
         public IEnumerable<Charges> Charges { get; set; }
         public string CostCentre { get; set; }
-        public string LhaArea { get; set; }
-        public decimal? LhaRate { get; set; }
+        public string Brma { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
@@ -29,5 +28,7 @@ namespace ContractsApi.V1.Boundary.Requests
         public string OptionToTaxLinkToGoogleDrive { get; set; }
         public Frequency Rates { get; set; }
         public TenureType DefaultTenureType { get; set; }
+        public DateTime? SuspensionDate { get; set; }
+        public string ReasonForSuspensionDate { get; set; }
     }
 }

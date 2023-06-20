@@ -15,6 +15,7 @@ namespace ContractsApi.V1.Factories
                 Id = Guid.NewGuid(),
                 TargetId = request.TargetId,
                 TargetType = request.TargetType,
+                Uprn = request.Uprn,
                 ContractType = request.ContractType,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
@@ -22,8 +23,7 @@ namespace ContractsApi.V1.Factories
                 RelatedPeople = request.RelatedPeople.ToList(),
                 Charges = request.Charges.ToList(),
                 CostCentre = request.CostCentre,
-                LhaArea = request.LhaArea,
-                LhaRate = request.LhaRate,
+                Brma = request.Brma,
                 IsActive = request.IsActive,
                 IsVATRegistered = request.IsVATRegistered,
                 Stage = request.Stage,
@@ -38,7 +38,9 @@ namespace ContractsApi.V1.Factories
                 OptionToTax = request.OptionToTax,
                 OptionToTaxLinkToGoogleDrive = request.OptionToTaxLinkToGoogleDrive,
                 Rates = request.Rates,
-                DefaultTenureType = request.DefaultTenureType
+                DefaultTenureType = request.DefaultTenureType,
+                SuspensionDate = request.SuspensionDate,
+                ReasonForSuspensionDate = request.ReasonForSuspensionDate
             };
         }
     }

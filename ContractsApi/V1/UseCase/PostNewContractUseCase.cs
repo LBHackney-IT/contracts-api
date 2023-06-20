@@ -24,9 +24,9 @@ namespace ContractsApi.V1.UseCase
             _snsFactory = snsFactory;
         }
 
-        public async Task<ContractResponseObject> ExecuteAsync(CreateContractRequestObject createTenureRequestObject, Token token)
+        public async Task<ContractResponseObject> ExecuteAsync(CreateContractRequestObject createContractRequestObject, Token token)
         {
-            var contract = await _contractGateway.PostNewContractAsync(createTenureRequestObject.ToDatabase()).ConfigureAwait(false);
+            var contract = await _contractGateway.PostNewContractAsync(createContractRequestObject.ToDatabase()).ConfigureAwait(false);
             if (contract != null && token != null)
             {
                 var contractSnsMessage = _snsFactory.CreateContract(contract, token);

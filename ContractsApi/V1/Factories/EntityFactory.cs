@@ -14,6 +14,8 @@ namespace ContractsApi.V1.Factories
                 Id = contractDb.Id,
                 TargetId = contractDb.TargetId,
                 TargetType = contractDb.TargetType,
+                Uprn = contractDb.Uprn,
+                TargetContractNumber = contractDb.TargetContractNumber,
                 ContractType = contractDb.ContractType,
                 StartDate = contractDb.StartDate,
                 EndDate = contractDb.EndDate,
@@ -23,8 +25,7 @@ namespace ContractsApi.V1.Factories
                 Charges = contractDb.Charges,
                 VersionNumber = contractDb.VersionNumber,
                 CostCentre = contractDb.CostCentre,
-                LhaArea = contractDb.LhaArea,
-                LhaRate = contractDb.LhaRate,
+                Brma = contractDb.Brma,
                 IsActive = contractDb.IsActive,
                 IsVATRegistered = contractDb.IsVATRegistered,
                 Stage = contractDb.Stage,
@@ -37,7 +38,9 @@ namespace ContractsApi.V1.Factories
                 OptionToTax = contractDb.OptionToTax,
                 OptionToTaxLinkToGoogleDrive = contractDb.OptionToTaxLinkToGoogleDrive,
                 Rates = contractDb.Rates,
-                DefaultTenureType = contractDb.DefaultTenureType
+                DefaultTenureType = contractDb.DefaultTenureType,
+                SuspensionDate = contractDb.SuspensionDate,
+                ReasonForSuspensionDate = contractDb.ReasonForSuspensionDate
             };
         }
 
@@ -49,6 +52,8 @@ namespace ContractsApi.V1.Factories
                 Id = contract.Id,
                 TargetId = contract.TargetId,
                 TargetType = contract.TargetType,
+                Uprn = contract.Uprn,
+                TargetContractNumber = contract.TargetContractNumber,
                 ContractType = contract.ContractType,
                 StartDate = contract.StartDate,
                 EndDate = contract.EndDate,
@@ -58,8 +63,7 @@ namespace ContractsApi.V1.Factories
                 Charges = contract.Charges.ToList(),
                 VersionNumber = contract.VersionNumber,
                 CostCentre = contract.CostCentre,
-                LhaArea = contract.LhaArea,
-                LhaRate = contract.LhaRate,
+                Brma = contract.Brma,
                 IsActive = contract.IsActive,
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
@@ -72,7 +76,9 @@ namespace ContractsApi.V1.Factories
                 OptionToTax = contract.OptionToTax,
                 OptionToTaxLinkToGoogleDrive = contract.OptionToTaxLinkToGoogleDrive,
                 Rates = contract.Rates,
-                DefaultTenureType = contract.DefaultTenureType
+                DefaultTenureType = contract.DefaultTenureType,
+                SuspensionDate = contract.SuspensionDate,
+                ReasonForSuspensionDate = contract.ReasonForSuspensionDate
             };
         }
     }

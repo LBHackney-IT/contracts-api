@@ -9,6 +9,9 @@ namespace ContractsApi.V1.Boundary.Response
         public Guid Id { get; set; }
         public Guid TargetId { get; set; }
         public string TargetType { get; set; }
+        public string Uprn { get; set; }
+        public int TargetContractNumber { get; set; }
+        public string ContractNumber { get; set; }
         public string ContractType { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
@@ -18,8 +21,7 @@ namespace ContractsApi.V1.Boundary.Response
         public List<Charges> Charges { get; set; }
         public int? VersionNumber { get; set; }
         public string CostCentre { get; set; }
-        public string LhaArea { get; set; }
-        public decimal? LhaRate { get; set; }
+        public string Brma { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
@@ -33,5 +35,7 @@ namespace ContractsApi.V1.Boundary.Response
         public string OptionToTaxLinkToGoogleDrive { get; set; }
         public Frequency Rates { get; set; }
         public TenureType DefaultTenureType { get; set; }
+        public DateTime? SuspensionDate { get; set; }
+        public string ReasonForSuspensionDate { get; set; }
     }
 }
