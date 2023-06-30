@@ -34,6 +34,9 @@ namespace ContractsApi.V1.Infrastructure
         public DateTime? EndDate { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
+        public DateTime? HandbackDate { get; set; }
+
+        [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? RenewalDate { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
@@ -53,6 +56,8 @@ namespace ContractsApi.V1.Infrastructure
         public string Brma { get; set; }
         [DynamoDBProperty]
         public bool? IsActive { get; set; }
+        [DynamoDBProperty]
+        public bool? HoldPayment { get; set; }
         [DynamoDBProperty]
         public bool? IsVATRegistered { get; set; }
         [DynamoDBProperty]
