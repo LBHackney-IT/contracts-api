@@ -15,6 +15,7 @@ namespace ContractsApi.V1.Boundary.Response
         public string ContractType { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public DateTime? HandbackDate { get; set; }
         public DateTime? RenewalDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public List<RelatedPeople> RelatedPeople { get; set; }
@@ -23,6 +24,7 @@ namespace ContractsApi.V1.Boundary.Response
         public string CostCentre { get; set; }
         public string Brma { get; set; }
         public bool? IsActive { get; set; }
+        public bool? HoldPayment { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
         public string VatRegistrationNumber { get; set; }
