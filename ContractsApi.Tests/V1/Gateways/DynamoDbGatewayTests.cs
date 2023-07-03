@@ -69,6 +69,7 @@ namespace ContractsApi.Tests.V1.Gateways
                 .With(x => x.TargetId, targetId)
                 .With(x => x.TargetType, "asset")
                 .With(x => x.VersionNumber, (int?) null)
+                .With(x => x.HandbackDate, (DateTime?) null)
                 .CreateMany(count));
 
             foreach (var contract in contracts)

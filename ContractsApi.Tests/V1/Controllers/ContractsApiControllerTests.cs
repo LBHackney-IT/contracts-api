@@ -208,6 +208,11 @@ namespace ContractsApi.Tests.V1.Controllers
         {
             var mockGuid = new Guid();
             var mockRequestObject = _fixture.Create<EditContractRequest>();
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            mockRequestObject.StartDate = today;
+            mockRequestObject.HandbackDate = tomorrow;
 
             _mockPatchContractUseCase
                 .Setup(x => x.ExecuteAsync(mockGuid, mockRequestObject, It.IsAny<string>(), It.IsAny<Token>(),
