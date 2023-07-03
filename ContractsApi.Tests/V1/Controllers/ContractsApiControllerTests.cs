@@ -241,12 +241,24 @@ namespace ContractsApi.Tests.V1.Controllers
 
             var response = await _classUnderTest.PatchContract(mockGuid, mockRequestObject).ConfigureAwait(false);
             var statusCode = GetStatusCode(response);
+            var statusMessage = GetProblemDetail(response);
+
             statusCode.Should().Be(400);
+            statusMessage.Should().Be("Handback date cannot be prior to Start date");
         }
 
         protected static int? GetStatusCode(IActionResult result)
         {
             return (result as IStatusCodeActionResult).StatusCode;
+        }
+
+        protected static string GetProblemDetail(IActionResult result)
+        {
+            if (result is BadRequestObjectResult objectResult)
+            {
+                return objectResult.Value.ToString();
+            }
+            return null;
         }
 
     }
