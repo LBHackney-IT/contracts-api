@@ -40,7 +40,9 @@ namespace ContractsApi.V1.Boundary.Requests
         public CustomEditContractValidation()
         {
             RuleFor(x => x.HandbackDate)
-                .GreaterThanOrEqualTo(x => x.StartDate).WithMessage("Handback date cannot be prior to Start date");
+                .GreaterThanOrEqualTo(x => x.StartDate)
+                .When(x => x.StartDate != null && x.HandbackDate != null)
+                .WithMessage("Handback date cannot be prior to Start date");
         }
     }
 }
