@@ -149,6 +149,9 @@ namespace ContractsApi.V1.Gateways
             if (ifMatch != existingContract.VersionNumber)
                 throw new VersionNumberConflictException(ifMatch, existingContract.VersionNumber);
 
+            if (existingContract.StartDate > contractRequestBody.HandbackDate)
+                throw new StartAndHandbackDatesConflictException(existingContract.StartDate, contractRequestBody.HandbackDate);
+
             var response = _updater.UpdateEntity(existingContract, requestBody, contractRequestBody);
 
             if (response.NewValues.Any())
