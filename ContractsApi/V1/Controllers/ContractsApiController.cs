@@ -135,7 +135,7 @@ namespace ContractsApi.V1.Controllers
             }
             catch (StartAndHandbackDatesConflictException e)
             {
-                return Conflict(e.Message);
+                return BadRequest(e.Message);
             }
         }
 

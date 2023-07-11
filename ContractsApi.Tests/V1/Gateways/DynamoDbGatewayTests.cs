@@ -229,6 +229,28 @@ namespace ContractsApi.Tests.V1.Gateways
             _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}", Times.Never());
         }
 
+        [Fact]
+        public async Task PatchContractThrowsDatesErrorWhenStartDateIsNull()
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var currentContract = _fixture.Build<ContractDb>()
+                                .With(x => x.StartDate, (DateTime?) null)
+                                .With(x => x.VersionNumber, (int?) null).Create();
+
+            await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
+
+            var contractId = currentContract.Id;
+            var request = _fixture.Create<EditContractRequest>();
+            request.HandbackDate = today;
+
+            Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
+                await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), It.IsAny<int>())
+                    .ConfigureAwait(false);
+
+            await func.Should().ThrowAsync<StartAndHandbackDatesConflictException>().WithMessage($"Handback date ({request.HandbackDate}) cannot be prior to Start date ({currentContract.StartDate}).");
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}", Times.Never());
+        }
 
 
         [Fact]
