@@ -133,6 +133,10 @@ namespace ContractsApi.V1.Controllers
             {
                 return Conflict(e.Message);
             }
+            catch (StartAndHandbackDatesConflictException e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         private int? GetIfMatchFromHeader()
