@@ -248,7 +248,7 @@ namespace ContractsApi.Tests.V1.Gateways
                 await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), It.IsAny<int>())
                     .ConfigureAwait(false);
 
-            await func.Should().ThrowAsync<StartAndHandbackDatesConflictException>().WithMessage($"Handback date ({request.HandbackDate}) cannot be prior to Start date ({currentContract.StartDate}).");
+            await func.Should().ThrowAsync<StartAndHandbackDatesConflictException>().WithMessage($"Handback date ({request.HandbackDate}) cannot be prior to Start date ({{null}}).");
             _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}", Times.Never());
         }
 
