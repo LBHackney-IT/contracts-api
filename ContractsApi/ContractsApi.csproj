@@ -20,6 +20,7 @@
     <PackageReference Include="AWSXRayRecorder.Handlers.AspNetCore" Version="2.7.2" />
     <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.8.2" />
     <PackageReference Include="AWSXRayRecorder.Handlers.EntityFramework" Version="1.1.0" />
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
     <PackageReference Include="Hackney.Core.DynamoDb" Version="1.51.0" />
     <PackageReference Include="Hackney.Core.HealthCheck" Version="1.49.0" />
     <PackageReference Include="Hackney.Core.Http" Version="1.73.0-feat-patch-api-g0004" />

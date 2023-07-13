@@ -14,6 +14,7 @@ namespace ContractsApi.V1.Domain
         public string ContractNumber => $"{Uprn}N{TargetContractNumber}";
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public DateTime? HandbackDate { get; set; }
         public DateTime? RenewalDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
@@ -22,6 +23,7 @@ namespace ContractsApi.V1.Domain
         public string CostCentre { get; set; }
         public string Brma { get; set; }
         public bool? IsActive { get; set; }
+        public bool? HoldPayment { get; set; }
         public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
         public string VatRegistrationNumber { get; set; }

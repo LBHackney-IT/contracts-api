@@ -18,11 +18,13 @@ using Hackney.Core.JWT;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
-using Microsoft.AspNetCore.Routing;
+
+
 
 namespace ContractsApi.Tests.V1.Controllers
 {
@@ -186,6 +188,11 @@ namespace ContractsApi.Tests.V1.Controllers
         {
             var mockGuid = new Guid();
             var mockRequestObject = _fixture.Create<EditContractRequest>();
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            mockRequestObject.StartDate = today;
+            mockRequestObject.HandbackDate = tomorrow;
 
             _mockPatchContractUseCase
                 .Setup(x => x.ExecuteAsync(mockGuid, mockRequestObject, It.IsAny<string>(), It.IsAny<Token>(),
@@ -201,6 +208,11 @@ namespace ContractsApi.Tests.V1.Controllers
         {
             var mockGuid = new Guid();
             var mockRequestObject = _fixture.Create<EditContractRequest>();
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            mockRequestObject.StartDate = today;
+            mockRequestObject.HandbackDate = tomorrow;
 
             _mockPatchContractUseCase
                 .Setup(x => x.ExecuteAsync(mockGuid, mockRequestObject, It.IsAny<string>(), It.IsAny<Token>(),
@@ -210,5 +222,44 @@ namespace ContractsApi.Tests.V1.Controllers
 
             response.Should().BeOfType(typeof(NotFoundResult));
         }
+
+        [Fact]
+        public async Task PatchContractReturnsErrorIfValidationFails()
+        {
+            var mockGuid = new Guid();
+            var mockRequestObject = _fixture.Create<EditContractRequest>();
+
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            mockRequestObject.StartDate = tomorrow;
+            mockRequestObject.HandbackDate = today;
+
+            _mockPatchContractUseCase
+                .Setup(x => x.ExecuteAsync(mockGuid, mockRequestObject, It.IsAny<string>(), It.IsAny<Token>(),
+                    It.IsAny<int?>())).ReturnsAsync((ContractResponseObject) null);
+
+            var response = await _classUnderTest.PatchContract(mockGuid, mockRequestObject).ConfigureAwait(false);
+            var statusCode = GetStatusCode(response);
+            var statusMessage = GetProblemDetail(response);
+
+            statusCode.Should().Be(400);
+            statusMessage.Should().Be("Handback date cannot be prior to Start date");
+        }
+
+        protected static int? GetStatusCode(IActionResult result)
+        {
+            return (result as IStatusCodeActionResult).StatusCode;
+        }
+
+        protected static string GetProblemDetail(IActionResult result)
+        {
+            if (result is BadRequestObjectResult objectResult)
+            {
+                return objectResult.Value.ToString();
+            }
+            return null;
+        }
+
     }
 }

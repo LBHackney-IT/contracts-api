@@ -112,6 +112,13 @@ namespace ContractsApi.V1.Controllers
             var bodyText = await HttpContext.Request.GetRawBodyStringAsync().ConfigureAwait(false);
             var ifMatch = GetIfMatchFromHeader();
             var token = _tokenFactory.Create(_contextWrapper.GetContextRequestHeaders(HttpContext));
+            var validator = new CustomEditContractValidation();
+            var validationResults = validator.Validate(contract);
+
+            if (!validationResults.IsValid)
+            {
+                return BadRequest(validationResults.ToString());
+            }
 
             try
             {
@@ -125,6 +132,10 @@ namespace ContractsApi.V1.Controllers
             catch (VersionNumberConflictException e)
             {
                 return Conflict(e.Message);
+            }
+            catch (StartAndHandbackDatesConflictException e)
+            {
+                return BadRequest(e.Message);
             }
         }
 
