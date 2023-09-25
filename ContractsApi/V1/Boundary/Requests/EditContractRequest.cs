@@ -13,6 +13,7 @@ namespace ContractsApi.V1.Boundary.Requests
         public DateTime? HandbackDate { get; set; }
         public DateTime? RenewalDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
+        public DateTime? PaymentStartDate { get; set; }
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
         public IEnumerable<Charges> Charges { get; set; }
         public string CostCentre { get; set; }
