@@ -42,6 +42,9 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? ApprovalDate { get; set; }
 
+        [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
+        public DateTime? PaymentStartDate { get; set; }
+
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectListConverter<RelatedPeople>))]
         public List<RelatedPeople> RelatedPeople { get; set; } = new List<RelatedPeople>();
 

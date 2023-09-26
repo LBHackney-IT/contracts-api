@@ -30,6 +30,7 @@ namespace ContractsApi.V1.Factories
                 IsVATRegistered = request.IsVATRegistered,
                 Stage = request.Stage,
                 ApprovalDate = request.ApprovalDate,
+                PaymentStartDate = request.PaymentStartDate,
                 VersionNumber = request.VersionNumber,
                 VatRegistrationNumber = request.VatRegistrationNumber,
                 ReviewDate = request.ReviewDate,
