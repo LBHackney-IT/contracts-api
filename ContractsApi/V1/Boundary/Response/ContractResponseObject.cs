@@ -16,7 +16,6 @@ namespace ContractsApi.V1.Boundary.Response
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? HandbackDate { get; set; }
-        public DateTime? RenewalDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public DateTime? PaymentStartDate { get; set; }
         public List<RelatedPeople> RelatedPeople { get; set; }

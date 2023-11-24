@@ -37,9 +37,6 @@ namespace ContractsApi.V1.Infrastructure
         public DateTime? HandbackDate { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
-        public DateTime? RenewalDate { get; set; }
-
-        [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? ApprovalDate { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
