@@ -15,7 +15,6 @@ namespace ContractsApi.V1.Domain
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? HandbackDate { get; set; }
-        public DateTime? RenewalDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public DateTime? PaymentStartDate { get; set; }
         public IEnumerable<RelatedPeople> RelatedPeople { get; set; }
