@@ -20,7 +20,6 @@ namespace ContractsApi.V1.Factories
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
                 HandbackDate = request.HandbackDate,
-                RenewalDate = request.RenewalDate,
                 RelatedPeople = request.RelatedPeople.ToList(),
                 Charges = request.Charges.ToList(),
                 CostCentre = request.CostCentre,
