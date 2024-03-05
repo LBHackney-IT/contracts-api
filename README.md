@@ -167,17 +167,6 @@ If changes to the database schema are made then the docker image for the databas
 - Observable monitoring in place
 - Should not affect any existing databases
 
-## Contacts
-
-### Active Maintainers
-
-- **Selwyn Preston**, Lead Developer at London Borough of Hackney (selwyn.preston@hackney.gov.uk)
-- **Mirela Georgieva**, Lead Developer at London Borough of Hackney (mirela.georgieva@hackney.gov.uk)
-
-### Other Contacts
-
-- **Rashmi Shetty**, Product Owner at London Borough of Hackney (rashmi.shetty@hackney.gov.uk)
-
 [docker-download]: https://www.docker.com/products/docker-desktop
 [universal-housing-simulator]: https://github.com/LBHackney-IT/lbh-universal-housing-simulator
 [made-tech]: https://madetech.com/

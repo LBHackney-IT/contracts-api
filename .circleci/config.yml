@@ -8,7 +8,7 @@ orbs:
 executors:
   docker-python:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
   docker-terraform:
     docker:
       - image: "hashicorp/terraform:1.1.9"
@@ -270,89 +270,89 @@ workflows:
             branches:
               only: master
   check-and-deploy-staging-and-production:
-       jobs:
-       - check-code-formatting:
-           context: api-nuget-token-context
-           filters:
-             branches:
-               only: release
-       - build-and-test:
-           context: api-nuget-token-context
-           filters:
-             branches:
-               only: release
-       - assume-role-staging:
-           context: api-assume-role-housing-staging-context
-           requires:
-               - build-and-test
-           filters:
-              branches:
-                only: release
-       - terraform-init-and-plan-staging:
-           requires:
-             - assume-role-staging
-           filters:
-             branches:
-               only: release
-       - terraform-compliance-staging:
-           requires:
-             - terraform-init-and-plan-staging
-           filters:
-             branches:
-               only: release
-       - terraform-apply-staging:
-           requires:
-             - terraform-compliance-staging
-           filters:
-             branches:
-               only: release
-       - deploy-to-staging:
-           context: api-nuget-token-context
-           requires:
-             - terraform-apply-staging
-           filters:
-             branches:
-               only: release
-       - permit-production-terraform-release:
-           type: approval
-           requires:
-             - deploy-to-staging
-       - assume-role-production:
-           context: api-assume-role-housing-production-context
-           requires:
-               - permit-production-terraform-release
-           filters:
-              branches:
-                only: release
-       - terraform-init-and-plan-production:
-           requires:
-             - assume-role-production
-           filters:
-             branches:
-               only: release
-       - terraform-compliance-production:
-           requires:
-             - terraform-init-and-plan-production
-           filters:
-             branches:
-               only: release
-       - terraform-apply-production:
-           requires:
-             - terraform-compliance-production
-           filters:
-             branches:
-               only: release
-       - permit-production-release:
-           type: approval
-           requires:
-             - terraform-apply-production
-           filters:
-             branches:
-               only: release
-       - deploy-to-production:
-           context: api-nuget-token-context
-           requires:
-             - permit-production-release
-           filters:
-             branches:
-               only: release
+    jobs:
+      - check-code-formatting:
+          context: api-nuget-token-context
+          filters:
+            branches:
+              only: release
+      - build-and-test:
+          context: api-nuget-token-context
+          filters:
+            branches:
+              only: release
+      - assume-role-staging:
+          context: api-assume-role-housing-staging-context
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: release
+      - terraform-init-and-plan-staging:
+          requires:
+            - assume-role-staging
+          filters:
+            branches:
+              only: release
+      - terraform-compliance-staging:
+          requires:
+            - terraform-init-and-plan-staging
+          filters:
+            branches:
+              only: release
+      - terraform-apply-staging:
+          requires:
+            - terraform-compliance-staging
+          filters:
+            branches:
+              only: release
+      - deploy-to-staging:
+          context: api-nuget-token-context
+          requires:
+            - terraform-apply-staging
+          filters:
+            branches:
+              only: release
+      - permit-production-terraform-release:
+          type: approval
+          requires:
+            - deploy-to-staging
+      - assume-role-production:
+          context: api-assume-role-housing-production-context
+          requires:
+            - permit-production-terraform-release
+          filters:
+            branches:
+              only: release
+      - terraform-init-and-plan-production:
+          requires:
+            - assume-role-production
+          filters:
+            branches:
+              only: release
+      - terraform-compliance-production:
+          requires:
+            - terraform-init-and-plan-production
+          filters:
+            branches:
+              only: release
+      - terraform-apply-production:
+          requires:
+            - terraform-compliance-production
+          filters:
+            branches:
+              only: release
+      - permit-production-release:
+          type: approval
+          requires:
+            - terraform-apply-production
+          filters:
+            branches:
+              only: release
+      - deploy-to-production:
+          context: api-nuget-token-context
+          requires:
+            - permit-production-release
+          filters:
+            branches:
+              only: release
