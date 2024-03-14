@@ -313,14 +313,10 @@ workflows:
           filters:
             branches:
               only: release
-      - permit-production-terraform-release:
-          type: approval
-          requires:
-            - deploy-to-staging
       - assume-role-production:
           context: api-assume-role-housing-production-context
           requires:
-            - permit-production-terraform-release
+            - deploy-to-staging
           filters:
             branches:
               only: release
@@ -336,9 +332,13 @@ workflows:
           filters:
             branches:
               only: release
-      - terraform-apply-production:
+      - permit-production-terraform-release:
+          type: approval
           requires:
             - terraform-compliance-production
+      - terraform-apply-production:
+          requires:
+            - permit-production-terraform-release
           filters:
             branches:
               only: release
