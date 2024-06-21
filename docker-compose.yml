@@ -7,7 +7,7 @@ services:
      context: .
      dockerfile: ContractsApi/Dockerfile
      args:
-     - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
+     - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}     
     ports:
       - 3000:3000
     environment:
@@ -29,6 +29,7 @@ services:
       dockerfile: ContractsApi.Tests/Dockerfile
       args:
       - LBHPACKAGESTOKEN=${LBHPACKAGESTOKEN}
+      - SONAR_TOKEN=${SONAR_TOKEN}      
     environment:
       - DynamoDb_LocalMode=true
       - Sns_LocalMode=true
