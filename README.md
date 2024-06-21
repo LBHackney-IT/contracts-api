@@ -1,4 +1,12 @@
 # LBH Base API
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=bugs)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=LBHackney-IT_contracts-api&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=LBHackney-IT_contracts-api)
 
 Base API is a boilerplate code for being reused for new APIs for LBH
 
