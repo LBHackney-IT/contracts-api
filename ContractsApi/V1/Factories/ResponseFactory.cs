@@ -25,6 +25,7 @@ namespace ContractsApi.V1.Factories
                 CostCentre = contract.CostCentre,
                 Brma = contract.Brma,
                 IsActive = contract.IsActive,
+                IsApproved = contract.IsApproved,
                 HoldPayment = contract.HoldPayment,
                 IsVATRegistered = contract.IsVATRegistered,
                 Stage = contract.Stage,
