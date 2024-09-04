@@ -59,6 +59,8 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty]
         public bool? IsApproved { get; set; }
         [DynamoDBProperty]
+        public ApprovalStatus ApprovalStatus { get; set; }
+        [DynamoDBProperty]
         public bool? HoldPayment { get; set; }
         [DynamoDBProperty]
         public bool? IsVATRegistered { get; set; }
