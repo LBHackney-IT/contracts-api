@@ -29,6 +29,7 @@ namespace ContractsApi.V1.Factories
                 Brma = contractDb.Brma,
                 IsActive = contractDb.IsActive,
                 IsApproved = contractDb.IsApproved,
+                ApprovalStatus = contractDb.ApprovalStatus,
                 HoldPayment = contractDb.HoldPayment,
                 IsVATRegistered = contractDb.IsVATRegistered,
                 Stage = contractDb.Stage,

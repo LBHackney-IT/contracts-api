@@ -26,6 +26,7 @@ namespace ContractsApi.V1.Factories
                 Brma = request.Brma,
                 IsActive = request.IsActive,
                 IsApproved = request.IsApproved,
+                ApprovalStatus = request.ApprovalStatus,
                 HoldPayment = request.HoldPayment,
                 IsVATRegistered = request.IsVATRegistered,
                 Stage = request.Stage,

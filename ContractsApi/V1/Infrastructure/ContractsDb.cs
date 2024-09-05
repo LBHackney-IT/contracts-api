@@ -50,45 +50,64 @@ namespace ContractsApi.V1.Infrastructure
 
         [DynamoDBVersion]
         public int? VersionNumber { get; set; }
+
         [DynamoDBProperty]
         public string CostCentre { get; set; }
+
         [DynamoDBProperty]
         public string Brma { get; set; }
+
         [DynamoDBProperty]
         public bool? IsActive { get; set; }
+
         [DynamoDBProperty]
         public bool? IsApproved { get; set; }
+
         [DynamoDBProperty]
         public ApprovalStatus ApprovalStatus { get; set; }
+
         [DynamoDBProperty]
         public bool? HoldPayment { get; set; }
+
         [DynamoDBProperty]
         public bool? IsVATRegistered { get; set; }
+
         [DynamoDBProperty]
         public int? Stage { get; set; }
+
         [DynamoDBProperty]
         public string VatRegistrationNumber { get; set; }
+
         [DynamoDBProperty]
         public DateTime? ReviewDate { get; set; }
+
         [DynamoDBProperty]
         public DateTime? ExtensionDate { get; set; }
+
         [DynamoDBProperty]
         public string ReasonForExtensionDate { get; set; }
+
         [DynamoDBProperty]
         public bool? SelfBillingAgreement { get; set; }
+
         [DynamoDBProperty]
         public string SelfBillingAgreementLinkToGoogleDrive { get; set; }
+
         [DynamoDBProperty]
         public bool? OptionToTax { get; set; }
+
         [DynamoDBProperty]
         public string OptionToTaxLinkToGoogleDrive { get; set; }
+
         [DynamoDBProperty]
         public Frequency Rates { get; set; }
 
         [DynamoDBProperty(Converter = typeof(DynamoDbObjectConverter<TenureType>))]
         public TenureType DefaultTenureType { get; set; }
+
         [DynamoDBProperty]
         public DateTime? SuspensionDate { get; set; }
+
         [DynamoDBProperty]
         public string ReasonForSuspensionDate { get; set; }
     }
