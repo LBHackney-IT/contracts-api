@@ -41,4 +41,4 @@ RUN dotnet build -c debug -o out ContractsApi.Tests/ContractsApi.Tests.csproj
 
 CMD dotnet test
 
-#RUN dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
+RUN dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
