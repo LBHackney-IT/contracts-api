@@ -28,7 +28,6 @@ namespace ContractsApi.V1.Factories
                 IsApproved = request.IsApproved,
                 ApprovalStatus = request.ApprovalStatus,
                 HoldPayment = request.HoldPayment,
-                IsVATRegistered = request.IsVATRegistered,
                 Stage = request.Stage,
                 ApprovalDate = request.ApprovalDate,
                 PaymentStartDate = request.PaymentStartDate,

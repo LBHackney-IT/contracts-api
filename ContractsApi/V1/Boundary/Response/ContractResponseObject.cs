@@ -27,7 +27,6 @@ namespace ContractsApi.V1.Boundary.Response
         public bool? IsApproved { get; set; }
         public ApprovalStatus ApprovalStatus { get; set; }
         public bool? HoldPayment { get; set; }
-        public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
         public string VatRegistrationNumber { get; set; }
         public DateTime? ReviewDate { get; set; }

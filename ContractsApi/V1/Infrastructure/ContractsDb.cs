@@ -70,9 +70,6 @@ namespace ContractsApi.V1.Infrastructure
         public bool? HoldPayment { get; set; }
 
         [DynamoDBProperty]
-        public bool? IsVATRegistered { get; set; }
-
-        [DynamoDBProperty]
         public int? Stage { get; set; }
 
         [DynamoDBProperty]
