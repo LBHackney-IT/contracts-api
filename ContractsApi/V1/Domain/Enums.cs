@@ -11,4 +11,12 @@ namespace ContractsApi.V1.Domain
         Monthly,
         Yearly
     }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum ApprovalStatus
+    {
+        PendingApproval,
+        Approved,
+        PendingReapproval
+    }
 }

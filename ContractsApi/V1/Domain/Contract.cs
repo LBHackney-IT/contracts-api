@@ -24,8 +24,8 @@ namespace ContractsApi.V1.Domain
         public string Brma { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsApproved { get; set; }
+        public ApprovalStatus ApprovalStatus { get; set; }
         public bool? HoldPayment { get; set; }
-        public bool? IsVATRegistered { get; set; }
         public int? Stage { get; set; }
         public string VatRegistrationNumber { get; set; }
         public DateTime? ReviewDate { get; set; }
