@@ -25,7 +25,7 @@ namespace ContractsApi.V1.Domain
         public bool? IsActive { get; set; }
         public bool? IsApproved { get; set; }
         public ApprovalStatus ApprovalStatus { get; set; }
-        public ApprovalStatusReason ApprovalStatusReason { get; set; }
+        public ApprovalStatusReason? ApprovalStatusReason { get; set; }
         public bool? HoldPayment { get; set; }
         public int? Stage { get; set; }
         public string VatRegistrationNumber { get; set; }

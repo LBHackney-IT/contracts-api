@@ -67,7 +67,7 @@ namespace ContractsApi.V1.Infrastructure
         public ApprovalStatus ApprovalStatus { get; set; }
 
         [DynamoDBProperty]
-        public ApprovalStatusReason ApprovalStatusReason { get; set; }
+        public ApprovalStatusReason? ApprovalStatusReason { get; set; }
 
         [DynamoDBProperty]
         public bool? HoldPayment { get; set; }
