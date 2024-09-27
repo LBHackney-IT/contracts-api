@@ -19,11 +19,4 @@ namespace ContractsApi.V1.Domain
         Approved,
         PendingReapproval
     }
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum ApprovalStatusReason
-    {
-        ContractExtended,
-        SuspensionLifted
-    }
 }
