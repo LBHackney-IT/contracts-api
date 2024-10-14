@@ -33,6 +33,9 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? EndDate { get; set; }
 
+        [DynamoDBProperty]
+        public string EndReason { get; set; }
+
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? HandbackDate { get; set; }
 
