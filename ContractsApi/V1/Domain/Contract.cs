@@ -14,6 +14,7 @@ namespace ContractsApi.V1.Domain
         public string ContractNumber => $"{Uprn}N{TargetContractNumber}";
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public string EndReason { get; set; }
         public DateTime? HandbackDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public DateTime? PaymentStartDate { get; set; }

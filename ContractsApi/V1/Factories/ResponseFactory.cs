@@ -19,6 +19,7 @@ namespace ContractsApi.V1.Factories
                 ContractNumber = contract.ContractNumber,
                 StartDate = contract.StartDate,
                 EndDate = contract.EndDate,
+                EndReason = contract.EndReason,
                 HandbackDate = contract.HandbackDate,
                 RelatedPeople = contract.RelatedPeople.ToList(),
                 Charges = contract.Charges.ToList(),
