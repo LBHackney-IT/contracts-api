@@ -1,16 +1,18 @@
+using System;
+using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
 using ContractsApi.V1.Domain;
-using ContractsApi.V1.Gateways;
 using ContractsApi.V1.Infrastructure;
 using FluentAssertions;
-using Hackney.Core.Testing.Shared;
-using Microsoft.Extensions.Logging;
-using Moq;
-using System;
+using Xunit;
 using System.Collections.Generic;
+using Amazon.DynamoDBv2.Model;
+using Moq;
+using Microsoft.Extensions.Logging;
+using ContractsApi.V1.Gateways;
+using Hackney.Core.Testing.Shared;
 using System.Linq;
-using System.Threading.Tasks;
 using ContractsApi.Tests.V1.Helper;
 using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Factories;
@@ -18,7 +20,6 @@ using ContractsApi.V1.Infrastructure.Exceptions;
 using Force.DeepCloner;
 using Hackney.Core.JWT;
 using Hackney.Core.Testing.DynamoDb;
-using Xunit;
 
 namespace ContractsApi.Tests.V1.Gateways
 {
@@ -70,6 +71,7 @@ namespace ContractsApi.Tests.V1.Gateways
                 .With(x => x.TargetType, "asset")
                 .With(x => x.VersionNumber, (int?) null)
                 .With(x => x.HandbackDate, (DateTime?) null)
+                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .CreateMany(count));
 
             foreach (var contract in contracts)
@@ -95,6 +97,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var contract = _fixture.Build<ContractDb>()
                 .With(x => x.VersionNumber, (int?) null)
+                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .Create();
 
             await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
@@ -286,6 +289,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var currentContract = _fixture.Build<ContractDb>()
                 .With(x => x.VersionNumber, (int?) null)
                 .With(x => x.StartDate, (DateTime?) today)
+                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .Create();
 
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
@@ -324,6 +328,30 @@ namespace ContractsApi.Tests.V1.Gateways
             load.EndDate.Should().Be(request.EndDate);
 
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contractId).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ApprovalStatusStoredCorrectly()
+        {
+            //using triple A XD
+
+            // Arrange
+            var contract = _fixture.Build<ContractDb>()
+                .With(x => x.VersionNumber, (int?)null)
+                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
+                .Create();
+            // Act
+            await _classUnderTest.PostNewContractAsync(contract).ConfigureAwait(false);
+            var storedContract = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
+            // Assert
+            storedContract.Should().NotBeNull();
+            storedContract.ApprovalStatus.Should().Be(ApprovalStatus.PendingApproval);
+            var document = _dbFixture.DynamoDbContext.ToDocument(storedContract);
+            var approvalStatusAttribute= document["ApprovalStatus"];
+            approvalStatusAttribute.Should().NotBeNull();
+            approvalStatusAttribute.AsString().Should().Be("PendingApproval");
+            // Cleanup
+            await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
         }
     }
 }
