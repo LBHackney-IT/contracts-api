@@ -185,6 +185,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var contract = _fixture.Build<ContractDb>()
                 .With(x => x.VersionNumber, (int?) null)
+                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .Create();
 
             await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
@@ -192,6 +193,9 @@ namespace ContractsApi.Tests.V1.Gateways
 
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(contract.ToDomain());
+
+            var storedContract = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
+            storedContract.ApprovalStatus.Should().Be(ApprovalStatus.PendingApproval);
 
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
         }
