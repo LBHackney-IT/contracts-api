@@ -23,7 +23,6 @@ using Hackney.Core.Testing.DynamoDb;
 
 namespace ContractsApi.Tests.V1.Gateways
 {
-
     [Collection("AppTest collection")]
     public class DynamoDbGatewayTests : IDisposable
     {
@@ -49,6 +48,7 @@ namespace ContractsApi.Tests.V1.Gateways
         }
 
         private bool _disposed;
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
@@ -66,13 +66,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var contracts = new List<ContractDb>();
 
-            contracts.AddRange(_fixture.Build<ContractDb>()
-                .With(x => x.TargetId, targetId)
-                .With(x => x.TargetType, "asset")
-                .With(x => x.VersionNumber, (int?) null)
-                .With(x => x.HandbackDate, (DateTime?) null)
-                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
-                .CreateMany(count));
+            contracts.AddRange(_fixture.Build<ContractDb>().With(x => x.TargetId, targetId).With(x => x.TargetType, "asset").With(x => x.VersionNumber, (int?) null).With(x => x.HandbackDate, (DateTime?) null).With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval).CreateMany(count));
 
             foreach (var contract in contracts)
             {
@@ -89,23 +83,20 @@ namespace ContractsApi.Tests.V1.Gateways
             var response = await _classUnderTest.GetContractById(request).ConfigureAwait(false);
 
             response.Should().BeNull();
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id {request.Id}", Times.Once());
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id {request.Id}",
+                Times.Once());
         }
 
         [Fact]
         public async Task GetContractByIdReturnsContractIfItExists()
         {
-            var contract = _fixture.Build<ContractDb>()
-                .With(x => x.VersionNumber, (int?) null)
-                .Create();
-
+            var contract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).Create();
             await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
-
             var request = BoundaryHelper.ConstructRequest(contract.Id);
             var response = await _classUnderTest.GetContractById(request).ConfigureAwait(false);
-
             response.Should().BeEquivalentTo(contract);
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id {request.Id}", Times.Once());
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.LoadAsync for id {request.Id}",
+                Times.Once());
         }
 
         [Fact]
@@ -113,9 +104,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var id = Guid.NewGuid();
             var request = new GetContractsQueryRequest { TargetId = id, TargetType = "asset" };
-
             var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
-
             response.Should().NotBeNull();
             response.Results.Should().BeEmpty();
             response.PaginationDetails.HasNext.Should().BeFalse();
@@ -128,9 +117,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var id = Guid.NewGuid();
             var request = new GetContractsQueryRequest { TargetId = id, TargetType = "asset" };
             var contracts = UpsertContracts(id, 5);
-
             var response = await _classUnderTest.GetContractsByTargetId(request).ConfigureAwait(false);
-
             response.Should().NotBeNull();
             response.Results.Should().BeEquivalentTo(contracts);
             response.PaginationDetails.HasNext.Should().BeFalse();
@@ -182,16 +169,11 @@ namespace ContractsApi.Tests.V1.Gateways
         [Fact]
         public async Task PostNewContractAsyncAddsContractToDatabase()
         {
-            var contract = _fixture.Build<ContractDb>()
-                .With(x => x.VersionNumber, (int?) null)
-                .Create();
-
+            var contract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).Create();
             await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
             var response = await _classUnderTest.PostNewContractAsync(contract).ConfigureAwait(false);
-
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(contract.ToDomain());
-
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
         }
 
@@ -201,24 +183,17 @@ namespace ContractsApi.Tests.V1.Gateways
             var mockGuid = new Guid();
             var mockRequestObject = _fixture.Create<EditContractRequest>();
             var mockRawBody = "";
-
-            var response = await _classUnderTest
-                .PatchContract(mockGuid, mockRequestObject, mockRawBody, It.IsAny<int?>())
-                .ConfigureAwait(false);
-
+            var response = await _classUnderTest.PatchContract(mockGuid, mockRequestObject, mockRawBody, It.IsAny<int?>()).ConfigureAwait(false);
             response.Should().BeNull();
         }
+
         [Fact]
         public async Task PatchContractThrowsDatesError()
         {
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
-            var currentContract = _fixture.Build<ContractDb>()
-                                .With(x => x.StartDate, (DateTime?) tomorrow)
-                                .With(x => x.VersionNumber, (int?) null).Create();
-
+            var currentContract = _fixture.Build<ContractDb>().With(x => x.StartDate, (DateTime?) tomorrow).With(x => x.VersionNumber, (int?) null).Create();
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
-
             var contractId = currentContract.Id;
             var request = _fixture.Create<EditContractRequest>();
             request.HandbackDate = today;
@@ -227,8 +202,10 @@ namespace ContractsApi.Tests.V1.Gateways
                 await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), It.IsAny<int>())
                     .ConfigureAwait(false);
 
-            await func.Should().ThrowAsync<StartAndHandbackDatesConflictException>().WithMessage($"Handback date ({request.HandbackDate}) cannot be prior to Start date ({currentContract.StartDate}).");
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}", Times.Never());
+            await func.Should().ThrowAsync<StartAndHandbackDatesConflictException>().WithMessage(
+                $"Handback date ({request.HandbackDate}) cannot be prior to Start date ({currentContract.StartDate}).");
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}",
+                Times.Never());
         }
 
         [Fact]
@@ -236,9 +213,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
-            var currentContract = _fixture.Build<ContractDb>()
-                                .With(x => x.StartDate, (DateTime?) null)
-                                .With(x => x.VersionNumber, (int?) null).Create();
+            var currentContract = _fixture.Build<ContractDb>().With(x => x.StartDate, (DateTime?) null).With(x => x.VersionNumber, (int?) null).Create();
 
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
 
@@ -247,11 +222,11 @@ namespace ContractsApi.Tests.V1.Gateways
             request.HandbackDate = today;
 
             Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
-                await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), It.IsAny<int>())
-                    .ConfigureAwait(false);
+                await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), It.IsAny<int>()).ConfigureAwait(false);
 
             await func.Should().ThrowAsync<StartAndHandbackDatesConflictException>().WithMessage($"Handback date ({request.HandbackDate}) cannot be prior to Start date ({{null}}).");
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}", Times.Never());
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}",
+                Times.Never());
         }
 
 
@@ -260,10 +235,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
-            var currentContract = _fixture.Build<ContractDb>()
-                .With(x => x.VersionNumber, (int?) null)
-                .With(x => x.StartDate, (DateTime?) today)
-                .Create();
+            var currentContract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.StartDate, (DateTime?) today).Create();
 
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
 
@@ -273,11 +245,11 @@ namespace ContractsApi.Tests.V1.Gateways
             request.HandbackDate = tomorrow;
 
             Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
-                await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion)
-                    .ConfigureAwait(false);
+                await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion).ConfigureAwait(false);
 
             await func.Should().ThrowAsync<VersionNumberConflictException>().WithMessage($"The version number supplied ({suppliedVersion}) does not match the current value on the entity ({0}).");
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}", Times.Never());
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}",
+                Times.Never());
         }
 
         [Fact]
@@ -285,10 +257,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
-            var currentContract = _fixture.Build<ContractDb>()
-                .With(x => x.VersionNumber, (int?) null)
-                .With(x => x.StartDate, (DateTime?) today)
-                .Create();
+            var currentContract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.StartDate, (DateTime?) today).Create();
 
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
 
@@ -317,14 +286,10 @@ namespace ContractsApi.Tests.V1.Gateways
                     }
                 });
 
-
             var response = await _classUnderTest.PatchContract(contractId, request, requestBody, suppliedVersion).ConfigureAwait(false);
-
             var load = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contractId).ConfigureAwait(false);
-
             load.StartDate.Should().Be(request.StartDate);
             load.EndDate.Should().Be(request.EndDate);
-
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contractId).ConfigureAwait(false);
         }
 
@@ -332,19 +297,13 @@ namespace ContractsApi.Tests.V1.Gateways
         public async Task ApprovalStatusStoredAndRetrievedCorrectly()
         {
             // Arrange
-            var contract = _fixture.Build<ContractDb>()
-                .With(x => x.VersionNumber, (int?)null)
-                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
-                .Create();
-
+            var contract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval).Create();
             // Act
             await _classUnderTest.PostNewContractAsync(contract).ConfigureAwait(false);
-
             // Assert
             var storedContract = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
             storedContract.Should().NotBeNull();
             storedContract.ApprovalStatus.Should().Be(ApprovalStatus.PendingApproval);
-
             // Cleanup
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
         }
@@ -353,16 +312,11 @@ namespace ContractsApi.Tests.V1.Gateways
         public void ApprovalStatusStoredAsStringInDynamoDb()
         {
             // Arrange
-            var contract = _fixture.Build<ContractDb>()
-                .With(x => x.VersionNumber, (int?)null)
-                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
-                .Create();
-
+            var contract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval).Create();
             //Act
             var document = _dbFixture.DynamoDbContext.ToDocument(contract);
-
             //Assert
-            var approvalStatusAttribute= document["approvalStatus"];
+            var approvalStatusAttribute = document["approvalStatus"];
             approvalStatusAttribute.Should().NotBeNull();
             approvalStatusAttribute.ToString().Should().Be("PendingApproval");
         }
