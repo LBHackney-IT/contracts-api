@@ -192,8 +192,6 @@ namespace ContractsApi.Tests.V1.Gateways
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(contract.ToDomain());
 
-            var storedContract = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
-
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
         }
 
@@ -366,7 +364,7 @@ namespace ContractsApi.Tests.V1.Gateways
             //Assert
             var approvalStatusAttribute= document["approvalStatus"];
             approvalStatusAttribute.Should().NotBeNull();
-            approvalStatusAttribute.AsString().Should().Be("PendingApproval");
+            approvalStatusAttribute.Should().Be("PendingApproval");
         }
     }
 }
