@@ -364,7 +364,7 @@ namespace ContractsApi.Tests.V1.Gateways
             //Assert
             var approvalStatusAttribute= document["approvalStatus"];
             approvalStatusAttribute.Should().NotBeNull();
-            approvalStatusAttribute.Should().Be("PendingApproval");
+            approvalStatusAttribute.ToString().Should().Be("PendingApproval");
         }
     }
 }
