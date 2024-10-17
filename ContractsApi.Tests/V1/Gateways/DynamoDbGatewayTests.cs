@@ -97,7 +97,6 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var contract = _fixture.Build<ContractDb>()
                 .With(x => x.VersionNumber, (int?) null)
-                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .Create();
 
             await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
@@ -185,7 +184,6 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var contract = _fixture.Build<ContractDb>()
                 .With(x => x.VersionNumber, (int?) null)
-                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .Create();
 
             await InsertDataIntoDynamoDB(contract).ConfigureAwait(false);
@@ -195,7 +193,6 @@ namespace ContractsApi.Tests.V1.Gateways
             response.Should().BeEquivalentTo(contract.ToDomain());
 
             var storedContract = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
-            storedContract.ApprovalStatus.Should().Be(ApprovalStatus.PendingApproval);
 
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
         }
@@ -293,7 +290,6 @@ namespace ContractsApi.Tests.V1.Gateways
             var currentContract = _fixture.Build<ContractDb>()
                 .With(x => x.VersionNumber, (int?) null)
                 .With(x => x.StartDate, (DateTime?) today)
-                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .Create();
 
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
@@ -335,27 +331,42 @@ namespace ContractsApi.Tests.V1.Gateways
         }
 
         [Fact]
-        public async Task ApprovalStatusStoredCorrectly()
+        public async Task ApprovalStatusStoredAndRetrievedCorrectly()
         {
-            //using triple A XD
-
             // Arrange
             var contract = _fixture.Build<ContractDb>()
                 .With(x => x.VersionNumber, (int?)null)
                 .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
                 .Create();
+
             // Act
             await _classUnderTest.PostNewContractAsync(contract).ConfigureAwait(false);
-            var storedContract = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
+
             // Assert
+            var storedContract = await _dbFixture.DynamoDbContext.LoadAsync<ContractDb>(contract.Id).ConfigureAwait(false);
             storedContract.Should().NotBeNull();
             storedContract.ApprovalStatus.Should().Be(ApprovalStatus.PendingApproval);
-            var document = _dbFixture.DynamoDbContext.ToDocument(storedContract);
-            var approvalStatusAttribute= document["ApprovalStatus"];
-            approvalStatusAttribute.Should().NotBeNull();
-            approvalStatusAttribute.AsString().Should().Be("PendingApproval");
+
             // Cleanup
             await _dbFixture.DynamoDbContext.DeleteAsync<ContractDb>(contract.Id).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public void ApprovalStatusStoredAsStringInDynamoDb()
+        {
+            // Arrange
+            var contract = _fixture.Build<ContractDb>()
+                .With(x => x.VersionNumber, (int?)null)
+                .With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval)
+                .Create();
+
+            //Act
+            var document = _dbFixture.DynamoDbContext.ToDocument(contract);
+
+            //Assert
+            var approvalStatusAttribute= document["approvalStatus"];
+            approvalStatusAttribute.Should().NotBeNull();
+            approvalStatusAttribute.AsString().Should().Be("PendingApproval");
         }
     }
 }
