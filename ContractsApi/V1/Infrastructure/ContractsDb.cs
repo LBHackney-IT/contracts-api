@@ -67,9 +67,6 @@ namespace ContractsApi.V1.Infrastructure
         public bool? IsApproved { get; set; }
 
         [DynamoDBProperty]
-        public ApprovalStatus ApprovalStatus { get; set; }
-
-        [DynamoDBProperty]
         public string ApprovalStatusReason { get; set; }
 
         [DynamoDBProperty]
@@ -101,6 +98,9 @@ namespace ContractsApi.V1.Infrastructure
 
         [DynamoDBProperty]
         public string OptionToTaxLinkToGoogleDrive { get; set; }
+
+        [DynamoDBProperty(Converter = typeof(DynamoDbEnumConverter<ApprovalStatus>))]
+        public ApprovalStatus ApprovalStatus { get; set; }
 
         [DynamoDBProperty]
         public Frequency Rates { get; set; }
