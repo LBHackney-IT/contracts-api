@@ -64,9 +64,6 @@ namespace ContractsApi.V1.Infrastructure
         public bool? IsActive { get; set; }
 
         [DynamoDBProperty]
-        public bool? IsApproved { get; set; }
-
-        [DynamoDBProperty]
         public string ApprovalStatusReason { get; set; }
 
         [DynamoDBProperty]
