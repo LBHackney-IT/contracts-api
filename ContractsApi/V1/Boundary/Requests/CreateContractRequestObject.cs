@@ -22,7 +22,6 @@ namespace ContractsApi.V1.Boundary.Requests
         public string CostCentre { get; set; }
         public string Brma { get; set; }
         public bool? IsActive { get; set; }
-        public bool IsApproved { get; set; }
         public string ApprovalStatusReason { get; set; }
         public bool? HoldPayment { get; set; }
         public int? Stage { get; set; }
