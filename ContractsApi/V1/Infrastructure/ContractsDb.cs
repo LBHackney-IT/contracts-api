@@ -33,6 +33,9 @@ namespace ContractsApi.V1.Infrastructure
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? EndDate { get; set; }
 
+        [DynamoDBProperty]
+        public string EndReason { get; set; }
+
         [DynamoDBProperty(Converter = typeof(DynamoDbDateTimeConverter))]
         public DateTime? HandbackDate { get; set; }
 
@@ -59,12 +62,6 @@ namespace ContractsApi.V1.Infrastructure
 
         [DynamoDBProperty]
         public bool? IsActive { get; set; }
-
-        [DynamoDBProperty]
-        public bool? IsApproved { get; set; }
-
-        [DynamoDBProperty]
-        public ApprovalStatus ApprovalStatus { get; set; }
 
         [DynamoDBProperty]
         public string ApprovalStatusReason { get; set; }
@@ -98,6 +95,9 @@ namespace ContractsApi.V1.Infrastructure
 
         [DynamoDBProperty]
         public string OptionToTaxLinkToGoogleDrive { get; set; }
+
+        [DynamoDBProperty(Converter = typeof(DynamoDbEnumConverter<ApprovalStatus>))]
+        public ApprovalStatus ApprovalStatus { get; set; }
 
         [DynamoDBProperty]
         public Frequency Rates { get; set; }

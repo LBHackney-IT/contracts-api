@@ -15,6 +15,7 @@ namespace ContractsApi.V1.Boundary.Response
         public string ContractType { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public string EndReason { get; set; }
         public DateTime? HandbackDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public DateTime? PaymentStartDate { get; set; }
@@ -24,8 +25,6 @@ namespace ContractsApi.V1.Boundary.Response
         public string CostCentre { get; set; }
         public string Brma { get; set; }
         public bool? IsActive { get; set; }
-        public bool? IsApproved { get; set; }
-        public ApprovalStatus ApprovalStatus { get; set; }
         public string ApprovalStatusReason { get; set; }
         public bool? HoldPayment { get; set; }
         public int? Stage { get; set; }
@@ -37,6 +36,7 @@ namespace ContractsApi.V1.Boundary.Response
         public string SelfBillingAgreementLinkToGoogleDrive { get; set; }
         public bool? OptionToTax { get; set; }
         public string OptionToTaxLinkToGoogleDrive { get; set; }
+        public ApprovalStatus ApprovalStatus { get; set; }
         public Frequency Rates { get; set; }
         public TenureType DefaultTenureType { get; set; }
         public DateTime? SuspensionDate { get; set; }
