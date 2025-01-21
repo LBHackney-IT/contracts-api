@@ -218,22 +218,16 @@ jobs:
           environment: "production"
   deploy-to-development:
     executor: docker-dotnet
-    context:
-      - "Serverless Framework"    
     steps:
       - deploy-lambda:
           stage: "development"
   deploy-to-staging:
     executor: docker-dotnet
-    context:
-      - "Serverless Framework"     
     steps:
       - deploy-lambda:
           stage: "staging"
   deploy-to-production:
     executor: docker-dotnet
-    context:
-      - "Serverless Framework"     
     steps:
       - deploy-lambda:
           stage: "production"
@@ -275,7 +269,8 @@ workflows:
       - deploy-to-development:
           context: api-nuget-token-context
           requires:
-            - terraform-apply-development
+            - "Serverless Framework"
+            - terraform-apply-development         
           filters:
             branches:
               only: master
@@ -321,6 +316,7 @@ workflows:
       - deploy-to-staging:
           context: api-nuget-token-context
           requires:
+            - "Serverless Framework"
             - terraform-apply-staging
           filters:
             branches:
@@ -364,6 +360,7 @@ workflows:
       - deploy-to-production:
           context: api-nuget-token-context
           requires:
+            - "Serverless Framework"
             - permit-production-release
           filters:
             branches:
