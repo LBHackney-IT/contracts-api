@@ -267,7 +267,7 @@ workflows:
             branches:
               only: master
       - deploy-to-development:
-         context:
+          context:
            - api-nuget-token-context
            - "Serverless Framework"
           requires:
@@ -315,12 +315,11 @@ workflows:
             branches:
               only: release
       - deploy-to-staging:
-         context:
+          context:
            - api-nuget-token-context
            - "Serverless Framework"
           requires:
             - terraform-apply-staging
-            - "Serverless Framework"
           filters:
             branches:
               only: release
@@ -361,12 +360,11 @@ workflows:
             branches:
               only: release
       - deploy-to-production:
-         context:
+          context:
            - api-nuget-token-context
            - "Serverless Framework"
           requires:
             - permit-production-release
-            - "Serverless Framework"
           filters:
             branches:
               only: release
