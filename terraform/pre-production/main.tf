@@ -14,13 +14,16 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+#using prod for environment as agreed with CE
 locals {
   parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
   default_tags = {
     Name              = "contracts-api-${var.environment_name}"
-    Environment       = var.environment_name
+    Environment       = "prod"
     terraform-managed = true
     project_name      = var.project_name
+    Application       = "MTFH Housing Pre-Production"
+    TeamEmail         = "developementteam@hackney.gov.uk"
   }
 }
 
