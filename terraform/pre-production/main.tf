@@ -33,3 +33,16 @@ terraform {
     dynamodb_table = "housing-pre-production-terraform-state-lock"
   }
 }
+
+resource "aws_sns_topic" "contracts" {
+  name                        = "contracts.fifo"
+  fifo_topic                  = true
+  content_based_deduplication = true
+  kms_master_key_id           = "alias/aws/sns"
+}
+
+resource "aws_ssm_parameter" "contracts_sns_arn" {
+  name  = "/sns-topic/pre-production/contracts/arn"
+  type  = "String"
+  value = aws_sns_topic.contracts.arn
+}
