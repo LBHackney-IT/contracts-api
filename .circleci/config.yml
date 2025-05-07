@@ -426,12 +426,12 @@ workflows:
           filters:
             branches:
               only: ts-2045-add-pre-production-workflow
-      # - terraform-apply-pre-production:
-      #     requires:
-      #       - permit-pre-production-terraform-deployment
-      #     filters:
-      #       branches:
-      #         only: ts-2045-add-pre-production-workflow
+      - terraform-apply-pre-production:
+          requires:
+            - permit-pre-production-terraform-deployment
+          filters:
+            branches:
+              only: ts-2045-add-pre-production-workflow
 
   # deploy-code-pre-production:
   #   jobs:
