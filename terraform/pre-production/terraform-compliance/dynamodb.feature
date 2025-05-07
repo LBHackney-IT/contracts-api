@@ -8,7 +8,7 @@ Feature: DynamoDB is used as our NoSQL database service
     Then it must contain tags
     And it must contain BackupPolicy
 
-  Scenario: Ensure point in time recovery enabled
+  Scenario: Ensure point in time recovery disabled
     Given I have aws_dynamodb_table defined
     Then it must contain point_in_time_recovery
-    And its enabled property must be true
+    And its enabled property must be false
