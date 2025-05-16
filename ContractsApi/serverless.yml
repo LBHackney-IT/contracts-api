@@ -58,8 +58,6 @@ resources:
         - ${self:provider.stage}
         - "pre-production"
         
-    ServerlessDeploymentBucketRefExists: !Not [ !IsSet ServerlessDeploymentBucket ]
-
   Resources:
     lambdaExecutionRole:
       Type: AWS::IAM::Role
@@ -113,7 +111,7 @@ resources:
                       Fn::Join:
                         - ""
                         - - "arn:aws:s3:::"
-                          - !If [ ServerlessDeploymentBucketRefExists, !Ref ServerlessDeploymentBucket, !Ref AWS::NoValue ]
+                          - !If [ UseV3DeploymentBucketPolicy, "Ref": "ServerlessDeploymentBucket", !Ref AWS::NoValue ]
                   - !Ref AWS::NoValue
           - PolicyName: lambdaInvocation
             PolicyDocument:
