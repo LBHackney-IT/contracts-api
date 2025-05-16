@@ -50,97 +50,97 @@ functions:
           path: /swagger/{proxy+}
           method: GET
           private: false
-# resources:
+resources:
 
-#   Resources:
-    # lambdaExecutionRole:
-    #   Type: AWS::IAM::Role
-    #   Properties:
-    #     Path: /${self:service}/${self:provider.stage}/
-    #     RoleName: ${self:service}-lambdaExecutionRole
-    #     AssumeRolePolicyDocument:
-    #       Version: '2012-10-17'
-    #       Statement:
-    #         - Effect: Allow
-    #           Principal:
-    #             Service:
-    #               - lambda.amazonaws.com
-    #           Action: sts:AssumeRole
-    #     ManagedPolicyArns:
-    #       - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-    #       - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
-    #     Policies:
-    #       - PolicyName: postToSns
-    #         PolicyDocument:
-    #             Version: '2012-10-17'
-    #             Statement:
-    #               - Effect: Allow
-    #                 Action:
-    #                   - "sns:Publish"
-    #                 Resource:
-    #                   - ${ssm:/sns-topic/${self:provider.stage}/contracts/arn}
-    #       - PolicyName: manageLogs
-    #         PolicyDocument:
-    #           Version: '2012-10-17'
-    #           Statement:
-    #             - Effect: Allow
-    #               Action:
-    #                 - logs:CreateLogGroup
-    #                 - logs:CreateLogStream
-    #                 - logs:PutLogEvents
-    #               Resource:
-    #                 - 'Fn::Join':
-    #                     - ':'
-    #                     - - 'arn:aws:logs'
-    #                       - Ref: 'AWS::Region'
-    #                       - Ref: 'AWS::AccountId'
-    #                       - 'log-group:/aws/lambda/*:*:*'
-    #                 - Effect: "Allow"
-    #                   Action:
-    #                     - "s3:PutObject"
-    #                     - "s3:GetObject"
-    #                   Resource:
-    #                     Fn::Join:
-    #                       - ""
-    #                       - - "arn:aws:s3:::"
-    #                         - "Ref": "ServerlessDeploymentBucket"
-    #       - PolicyName: lambdaInvocation
-    #         PolicyDocument:
-    #           Version: '2012-10-17'
-    #           Statement:
-    #             - Effect: Allow
-    #               Action:
-    #                 - "lambda:InvokeFunction"
-    #               Resource: "*"
-    #       - PolicyName: dynamoDBAccess
-    #         PolicyDocument:
-    #             Version: '2012-10-17'
-    #             Statement:
-    #               - Effect: Allow
-    #                 Action:
-    #                   - "dynamodb:BatchGet*"
-    #                   - "dynamodb:BatchWrite"
-    #                   - "dynamodb:DeleteItem"
-    #                   - "dynamodb:DescribeStream"
-    #                   - "dynamodb:DescribeTable"
-    #                   - "dynamodb:Get*"
-    #                   - "dynamodb:PutItem"
-    #                   - "dynamodb:Query"
-    #                   - "dynamodb:Scan"
-    #                   - "dynamodb:UpdateItem"
-    #                 Resource:
-    #                   - 'Fn::Join':
-    #                       - ':'
-    #                       - - 'arn:aws:dynamodb'
-    #                         - Ref: 'AWS::Region'
-    #                         - Ref: 'AWS::AccountId'
-    #                         - 'table/Contracts'
-    #                   - 'Fn::Join':
-    #                       - ':'
-    #                       - - 'arn:aws:dynamodb'
-    #                         - Ref: 'AWS::Region'
-    #                         - Ref: 'AWS::AccountId'
-    #                         - 'table/Contracts/index/*'
+  Resources:
+    lambdaExecutionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /${self:service}/${self:provider.stage}/
+        RoleName: ${self:service}-lambdaExecutionRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+          - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+        Policies:
+          - PolicyName: postToSns
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Effect: Allow
+                    Action:
+                      - "sns:Publish"
+                    Resource:
+                      - ${ssm:/sns-topic/${self:provider.stage}/contracts/arn}
+          - PolicyName: manageLogs
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - 'Fn::Join':
+                        - ':'
+                        - - 'arn:aws:logs'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'log-group:/aws/lambda/*:*:*'
+                    - Effect: "Allow"
+                      Action:
+                        - "s3:PutObject"
+                        - "s3:GetObject"
+                      Resource:
+                        Fn::Join:
+                          - ''
+                          - - 'arn:aws:s3:::'
+                            - Ref: ServerlessDeploymentBucket
+          - PolicyName: lambdaInvocation
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "lambda:InvokeFunction"
+                  Resource: "*"
+          - PolicyName: dynamoDBAccess
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                  - Effect: Allow
+                    Action:
+                      - "dynamodb:BatchGet*"
+                      - "dynamodb:BatchWrite"
+                      - "dynamodb:DeleteItem"
+                      - "dynamodb:DescribeStream"
+                      - "dynamodb:DescribeTable"
+                      - "dynamodb:Get*"
+                      - "dynamodb:PutItem"
+                      - "dynamodb:Query"
+                      - "dynamodb:Scan"
+                      - "dynamodb:UpdateItem"
+                    Resource:
+                      - 'Fn::Join':
+                          - ':'
+                          - - 'arn:aws:dynamodb'
+                            - Ref: 'AWS::Region'
+                            - Ref: 'AWS::AccountId'
+                            - 'table/Contracts'
+                      - 'Fn::Join':
+                          - ':'
+                          - - 'arn:aws:dynamodb'
+                            - Ref: 'AWS::Region'
+                            - Ref: 'AWS::AccountId'
+                            - 'table/Contracts/index/*'
 custom:
   authorizerArns:
     development: arn:aws:lambda:eu-west-2:859159924354:function:api-auth-verify-token-new-development-apiauthverifytokennew
