@@ -51,6 +51,13 @@ functions:
           method: GET
           private: false
 resources:
+  Conditions:
+    UseV3DeploymentBucketPolicy: 
+      Fn::Not:
+      - Fn::Equals:
+        - ${self:provider.stage}
+        - "pre-production"
+        
   Resources:
     lambdaExecutionRole:
       Type: AWS::IAM::Role
@@ -94,15 +101,18 @@ resources:
                           - Ref: 'AWS::Region'
                           - Ref: 'AWS::AccountId'
                           - 'log-group:/aws/lambda/*:*:*'
-                # - Effect: "Allow"
-                #   Action:
-                #     - "s3:PutObject"
-                #     - "s3:GetObject"
-                #   Resource:
-                #     Fn::Join:
-                #       - ""
-                #       - - "arn:aws:s3:::"
-                #         - "Ref": "ServerlessDeploymentBucket"
+                - !If 
+                  - UseV3DeploymentBucketPolicy  
+                  - Effect: "Allow"
+                    Action:
+                      - "s3:PutObject"
+                      - "s3:GetObject"
+                    Resource:
+                      Fn::Join:
+                        - ""
+                        - - "arn:aws:s3:::"
+                          - "Ref": "ServerlessDeploymentBucket"
+                  - !Ref AWS::NoValue
           - PolicyName: lambdaInvocation
             PolicyDocument:
               Version: '2012-10-17'
