@@ -159,6 +159,8 @@ custom:
         - subnet-01d3657f97a243261
         - subnet-0b7b8fea07efabf34
     pre-production:
+      securityGroupIds:
+        - sg-0d6267930f0c809b6
       subnetIds:
         - subnet-08aa35159a8706faa
         - subnet-0b848c5b14f841dfb
