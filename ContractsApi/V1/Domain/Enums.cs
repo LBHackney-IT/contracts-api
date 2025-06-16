@@ -19,4 +19,13 @@ namespace ContractsApi.V1.Domain
         Approved,
         PendingReapproval
     }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum AssetHierarchy
+    {
+        StandaloneUnit,
+        Block,
+        ChildUnit
+    }
+
 }
