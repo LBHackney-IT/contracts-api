@@ -220,6 +220,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var contractId = currentContract.Id;
             var request = _fixture.Create<EditContractRequest>();
             request.HandbackDate = today;
+            request.SuspensionDate = null;
 
             Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
                 await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), It.IsAny<int>()).ConfigureAwait(false);
@@ -251,6 +252,30 @@ namespace ContractsApi.Tests.V1.Gateways
             _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}",
                 Times.Never());
         }
+
+        [Fact]
+        public async Task PatchContractThrowsErrorIfTryingToSuspendBlock()
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var currentContract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.StartDate, (DateTime?) today).Create();
+
+            await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
+
+            var contractId = currentContract.Id;
+            var request = _fixture.Create<EditContractRequest>();
+            var suppliedVersion = 1;
+            request.HandbackDate = tomorrow;
+            request.SuspensionDate = tomorrow;
+            request.ContractManagement.AssetHierarchy = AssetHierarchy.Block;
+
+            Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
+                await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion).ConfigureAwait(false);
+
+            await func.Should().ThrowAsync<SuspendingBlockException>().WithMessage($"It is not possible to add a suspension to blocks");
+            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}",
+                Times.Never());
+        }        
 
         [Fact]
         public async Task PatchContractSuccessfullyUpdatesAContract()
