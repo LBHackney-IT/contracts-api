@@ -266,7 +266,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var suppliedVersion = 0;
             request.HandbackDate = tomorrow;
             request.SuspensionDate = tomorrow;
-            request.ContractManagement.AssetHierarchy = AssetHierarchy.Block;
+            currentContract.ContractManagement.AssetHierarchy = AssetHierarchy.Block;
 
             Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
                 await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion).ConfigureAwait(false);
