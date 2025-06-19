@@ -144,6 +144,7 @@ namespace ContractsApi.V1.Gateways
         {
             _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for id {id}");
             var existingContract = await _dynamoDbContext.LoadAsync<ContractDb>(id).ConfigureAwait(false);
+            var existingContractHierarchy = existingContract.ContractManagement.AssetHierarchy;
             if (existingContract == null) return null;
 
             if (ifMatch != existingContract.VersionNumber)
@@ -153,7 +154,7 @@ namespace ContractsApi.V1.Gateways
                 if (existingContract.StartDate > contractRequestBody.HandbackDate || existingContract.StartDate is null)
                     throw new StartAndHandbackDatesConflictException(existingContract.StartDate, contractRequestBody.HandbackDate);
             }
-            if ((existingContract.ContractManagement?.AssetHierarchy == AssetHierarchy.Block) && (contractRequestBody.SuspensionDate is not null))
+            if ((existingContractHierarchy == AssetHierarchy.Block) && (contractRequestBody.SuspensionDate is not null))
             {
                 throw new SuspendingBlockException();
             }

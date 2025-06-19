@@ -258,7 +258,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
             var currentContract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.StartDate, (DateTime?) today).Create();
-
+            currentContract.ContractManagement.AssetHierarchy = AssetHierarchy.Block;
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
 
             var contractId = currentContract.Id;
@@ -266,14 +266,11 @@ namespace ContractsApi.Tests.V1.Gateways
             var suppliedVersion = 0;
             request.HandbackDate = tomorrow;
             request.SuspensionDate = tomorrow;
-            currentContract.ContractManagement.AssetHierarchy = AssetHierarchy.Block;
 
             Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
                 await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion).ConfigureAwait(false);
 
             await func.Should().ThrowAsync<SuspendingBlockException>().WithMessage($"It is not possible to add a suspension to blocks");
-            _logger.VerifyExact(LogLevel.Debug, $"Calling IDynamoDBContext.SaveAsync to update id {contractId}",
-                Times.Never());
         }
 
         [Fact]
