@@ -41,5 +41,6 @@ namespace ContractsApi.V1.Boundary.Response
         public TenureType DefaultTenureType { get; set; }
         public DateTime? SuspensionDate { get; set; }
         public string ReasonForSuspensionDate { get; set; }
+        public ContractManagement ContractManagement { get; set; }
     }
 }
