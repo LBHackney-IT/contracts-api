@@ -112,6 +112,6 @@ namespace ContractsApi.V1.Infrastructure
         public string ReasonForSuspensionDate { get; set; }
 
         [DynamoDBProperty]
-        public ContractManagement ContractManagementInfo { get; set; }
+        public ContractManagement ContractManagement { get; set; }
     }
 }
