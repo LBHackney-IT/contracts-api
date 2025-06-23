@@ -270,7 +270,7 @@ namespace ContractsApi.Tests.V1.Gateways
             Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
                 await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion).ConfigureAwait(false);
 
-            await func.Should().ThrowAsync<SuspendingBlockException>().WithMessage($"It is not possible to add a suspension to blocks");
+            await func.Should().ThrowAsync<SuspendingBlockException>().WithMessage("It is not possible to add a suspension to blocks");
         }
 
         [Fact]
