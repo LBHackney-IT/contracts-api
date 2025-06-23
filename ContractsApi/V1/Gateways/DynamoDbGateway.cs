@@ -153,8 +153,8 @@ namespace ContractsApi.V1.Gateways
                 if (existingContract.StartDate > contractRequestBody.HandbackDate || existingContract.StartDate is null)
                     throw new StartAndHandbackDatesConflictException(existingContract.StartDate, contractRequestBody.HandbackDate);
             }
-            var existingContractHierarchy = existingContract.ContractManagement?.AssetHierarchy;
-            if ((existingContractHierarchy == AssetHierarchy.Block) && (contractRequestBody.SuspensionDate is not null))
+            var existingContractHierarchy = existingContract.ContractManagement?.ContractHierarchy;
+            if ((existingContractHierarchy == ContractHierarchy.Block) && (contractRequestBody.SuspensionDate is not null))
             {
                 throw new SuspendingBlockException();
             }

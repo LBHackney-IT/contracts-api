@@ -4,7 +4,7 @@ namespace ContractsApi.V1.Domain
 {
     public class ContractManagement
     {
-        public AssetHierarchy AssetHierarchy { get; set; }
+        public ContractHierarchy ContractHierarchy { get; set; }
         public Guid? ParentContractId { get; set; }
     }
 }

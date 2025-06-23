@@ -21,7 +21,7 @@ namespace ContractsApi.V1.Domain
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum AssetHierarchy
+    public enum ContractHierarchy
     {
         StandaloneUnit,
         Block,

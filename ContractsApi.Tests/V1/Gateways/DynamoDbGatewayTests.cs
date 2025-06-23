@@ -258,7 +258,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
             var currentContract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.StartDate, (DateTime?) today).Create();
-            currentContract.ContractManagement.AssetHierarchy = AssetHierarchy.Block;
+            currentContract.ContractManagement.ContractHierarchy = ContractHierarchy.Block;
             await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
 
             var contractId = currentContract.Id;
