@@ -6,6 +6,7 @@ using FluentValidation.TestHelper;
 using System;
 using System.Linq;
 using Xunit;
+using ContractsApi.V1.Domain;
 
 namespace ContractsApi.Tests.V1.Boundary.Request.Validation
 {
@@ -21,11 +22,26 @@ namespace ContractsApi.Tests.V1.Boundary.Request.Validation
         }
 
         [Fact]
-        public void RequestShouldErrorForNoContractHierarchyd()
+        public void RequestShouldErrorForNoContractHierarchy()
         {
             var model = new CreateContractRequestObject() { ContractManagement = null };
             var result = _ccrov.TestValidate(model);
-            result.ShouldHaveValidationErrorFor(x => x.ContractManagement);
+            result.ShouldHaveValidationErrorFor(x => x.ContractManagement)
+            .WithErrorMessage("The hierarchy of the contract must be present upon contract creation");
+        }
+        [Fact]
+        public void RequestShouldErrorForInvalidEnumValue()
+        {
+            var model = new CreateContractRequestObject()
+            {
+                ContractManagement = new()
+                {
+                    ContractHierarchy = (ContractHierarchy) 9
+                }
+            };
+            var result = _ccrov.TestValidate(model);
+            result.ShouldHaveValidationErrorFor(x => x.ContractManagement.ContractHierarchy)
+            .WithErrorMessage("The hierarchy provided is not valid");
         }
     }
 }
