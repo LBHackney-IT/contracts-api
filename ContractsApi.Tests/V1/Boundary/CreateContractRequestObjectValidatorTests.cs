@@ -27,7 +27,7 @@ namespace ContractsApi.Tests.V1.Boundary.Request.Validation
             var model = new CreateContractRequestObject() { ContractManagement = null };
             var result = _ccrov.TestValidate(model);
             result.ShouldHaveValidationErrorFor(x => x.ContractManagement)
-            .WithErrorMessage("The hierarchy of the contract must be present upon contract creation");
+            .WithErrorMessage("ContractManagement must be present upon contract creation");
         }
         [Fact]
         public void RequestShouldErrorForInvalidEnumValue()
