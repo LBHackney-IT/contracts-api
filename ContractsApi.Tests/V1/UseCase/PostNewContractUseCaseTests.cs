@@ -2,10 +2,13 @@ using System;
 using System.Threading.Tasks;
 using AutoFixture;
 using ContractsApi.Tests.V1.Helper;
+using ContractsApi.V1.Boundary.Requests;
+using ContractsApi.V1.Boundary.Response;
 using ContractsApi.V1.Domain;
 using ContractsApi.V1.Factories;
 using ContractsApi.V1.Gateways;
 using ContractsApi.V1.Infrastructure;
+using ContractsApi.V1.Infrastructure.Exceptions;
 using ContractsApi.V1.UseCase;
 using FluentAssertions;
 using Hackney.Core.JWT;
@@ -31,18 +34,43 @@ namespace ContractsApi.Tests.V1.UseCase
             _contractSnsFactory = new ContractSnsFactory();
             _classUnderTest = new PostNewContractUseCase(_mockGateway.Object, _contractSnsGateway.Object, _contractSnsFactory);
         }
-
         [Fact]
-        public async Task UseCaseShouldReturnContractIfSuccessfullyCreated()
+        public async Task UseCaseShouldThrowExceptionIfParentContractIdNotFound()
         {
             var contract = _fixture.Create<Contract>();
             var token = new Token();
             var request = BoundaryHelper.ConstructPostRequest();
+            _mockGateway.Setup(x => x.PostNewContractAsync(It.IsAny<ContractDb>())).ReturnsAsync(contract);
+            Func<Task<ContractResponseObject>> response = async () => await _classUnderTest.ExecuteAsync(request, token).ConfigureAwait(false);
+            await response.Should().ThrowAsync<Exception>()
+            .WithMessage($"Failed creating contract: no parent contract with id [{request.ContractManagement.ParentContractId}] was found");
+        }
+        [Fact]
+        public async Task UseCaseShouldReturnContractIfSuccessfullyCreatedWithNoParentContractId()
+        {
+            var contract = _fixture.Create<Contract>();
+            var token = new Token();
+            var request = BoundaryHelper.ConstructPostRequest();
+            request.ContractManagement.ParentContractId = null;
             _mockGateway.Setup(x => x.PostNewContractAsync(It.IsAny<ContractDb>())).ReturnsAsync(contract);
 
             var response = await _classUnderTest.ExecuteAsync(request, token).ConfigureAwait(false);
 
             response.Should().BeEquivalentTo(contract.ToResponse());
         }
+        [Fact]
+        public async Task UseCaseShouldReturnContractIfSuccessfullyCreatedWithValidParentContractId()
+        {
+            var contract = _fixture.Create<Contract>();
+            var ParentContract = _fixture.Create<Contract>();
+            var token = new Token();
+            var request = BoundaryHelper.ConstructPostRequest();
+            request.ContractManagement.ParentContractId = ParentContract.Id;
+            _mockGateway.Setup(x => x.PostNewContractAsync(It.IsAny<ContractDb>())).ReturnsAsync(contract);
+            _mockGateway.Setup(x => x.GetContractById(It.IsAny<ContractQueryRequest>())).ReturnsAsync(ParentContract);
+            var response = await _classUnderTest.ExecuteAsync(request, token).ConfigureAwait(false);
+            response.Should().BeEquivalentTo(contract.ToResponse());
+        }
+
     }
 }
