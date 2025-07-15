@@ -105,10 +105,10 @@ namespace ContractsApi.V1.Gateways
         {
             _logger.LogDebug($"Calling IDynamoDBContext.SaveAsync for target id {contract.TargetId}");
 
-            // if (string.IsNullOrWhiteSpace(contract.Uprn))
-            // {
-            //     throw new ArgumentException($"{nameof(contract.Uprn)} cannot be empty");
-            // }
+            if (string.IsNullOrWhiteSpace(contract.Uprn) && !(contract?.DraftContract ?? false))
+            {
+                throw new ArgumentException($"{nameof(contract.Uprn)} cannot be empty");
+            }
 
             var dupes = contract.Charges.GroupBy(x => x.Id)
               .Where(g => g.Count() > 1)
