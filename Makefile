@@ -1,22 +1,22 @@
 .PHONY: setup
 setup:
-	docker-compose build
+	docker compose build
 
 .PHONY: build
 build:
-	docker-compose build contracts-api
+	docker compose build contracts-api
 
 .PHONY: serve
 serve:
-	docker-compose build contracts-api && docker-compose up contracts-api
+	docker compose build contracts-api && docker compose up contracts-api
 
 .PHONY: shell
 shell:
-	docker-compose run contracts-api bash
+	docker compose run contracts-api bash
 
 .PHONY: test
 test:
-	docker-compose up dynamodb-database & docker-compose build contracts-api-test && docker-compose up contracts-api-test
+	docker compose up dynamodb-database & docker compose build contracts-api-test && docker compose up contracts-api-test
 
 .PHONY: lint
 lint:
@@ -29,4 +29,4 @@ restart-db:
 	docker stop $$(docker ps -q --filter ancestor=dynamodb-database -a)
 	-docker rm $$(docker ps -q --filter ancestor=dynamodb-database -a)
 	docker rmi dynamodb-database
-	docker-compose up -d dynamodb-database
+	docker compose up -d dynamodb-database

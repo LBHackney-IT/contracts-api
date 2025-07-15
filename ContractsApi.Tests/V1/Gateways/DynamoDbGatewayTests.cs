@@ -66,7 +66,7 @@ namespace ContractsApi.Tests.V1.Gateways
         {
             var contracts = new List<ContractDb>();
 
-            contracts.AddRange(_fixture.Build<ContractDb>().With(x => x.TargetId, targetId).With(x => x.TargetType, "asset").With(x => x.VersionNumber, (int?) null).With(x => x.HandbackDate, (DateTime?) null).With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval).CreateMany(count));
+            contracts.AddRange(_fixture.Build<ContractDb>().With(x => x.TargetId, targetId).With(x => x.TargetType, "asset").With(x => x.VersionNumber, (int?) null).With(x => x.HandbackDate, (DateTime?) null).With(x => x.ApprovalStatus, ApprovalStatus.PendingApproval).With(x => x.DraftContract, (bool?) null).CreateMany(count));
 
             foreach (var contract in contracts)
             {

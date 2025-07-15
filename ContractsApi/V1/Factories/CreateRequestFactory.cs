@@ -42,7 +42,8 @@ namespace ContractsApi.V1.Factories
                 Rates = request.Rates,
                 DefaultTenureType = request.DefaultTenureType,
                 SuspensionDate = request.SuspensionDate,
-                ReasonForSuspensionDate = request.ReasonForSuspensionDate
+                ReasonForSuspensionDate = request.ReasonForSuspensionDate,
+                DraftContract = request.DraftContract
             };
         }
     }
