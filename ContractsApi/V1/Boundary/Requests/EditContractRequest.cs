@@ -36,6 +36,7 @@ namespace ContractsApi.V1.Boundary.Requests
         public DateTime? SuspensionDate { get; set; }
         public string ReasonForSuspensionDate { get; set; }
         public bool? DraftContract { get; set; }
+        public string Uprn { get; set; }
     }
 
     public class CustomEditContractValidation : AbstractValidator<EditContractRequest>
