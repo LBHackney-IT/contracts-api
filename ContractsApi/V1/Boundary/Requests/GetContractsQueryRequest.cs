@@ -1,11 +1,12 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace ContractsApi.V1.Boundary.Requests
 {
     public class GetContractsQueryRequest
     {
         public Guid TargetId { get; set; }
-        public string TargetType { get; set; }
+        [JsonRequired] public string TargetType { get; set; }
 
         /// <summary>
         /// If true, return oldest contracts first

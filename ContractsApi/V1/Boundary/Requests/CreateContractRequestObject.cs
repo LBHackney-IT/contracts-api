@@ -1,12 +1,13 @@
 using ContractsApi.V1.Domain;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ContractsApi.V1.Boundary.Requests
 {
     public class CreateContractRequestObject
     {
-        public Guid TargetId { get; set; }
+        [JsonRequired] public Guid TargetId { get; set; }
         public string TargetType { get; set; }
         public string Uprn { get; set; }
         public string ContractType { get; set; }
@@ -33,8 +34,8 @@ namespace ContractsApi.V1.Boundary.Requests
         public string SelfBillingAgreementLinkToGoogleDrive { get; set; }
         public bool? OptionToTax { get; set; }
         public string OptionToTaxLinkToGoogleDrive { get; set; }
-        public ApprovalStatus ApprovalStatus { get; set; }
-        public Frequency Rates { get; set; }
+        [JsonRequired] public ApprovalStatus ApprovalStatus { get; set; }
+        [JsonRequired] public Frequency Rates { get; set; }
         public TenureType DefaultTenureType { get; set; }
         public DateTime? SuspensionDate { get; set; }
         public string ReasonForSuspensionDate { get; set; }
