@@ -34,8 +34,8 @@ namespace ContractsApi.V1.Boundary.Requests
         public string SelfBillingAgreementLinkToGoogleDrive { get; set; }
         public bool? OptionToTax { get; set; }
         public string OptionToTaxLinkToGoogleDrive { get; set; }
-        [JsonRequired] public ApprovalStatus ApprovalStatus { get; set; }
-        [JsonRequired] public Frequency Rates { get; set; }
+        public ApprovalStatus? ApprovalStatus { get; set; }
+        public Frequency? Rates { get; set; }
         public TenureType DefaultTenureType { get; set; }
         public DateTime? SuspensionDate { get; set; }
         public string ReasonForSuspensionDate { get; set; }
