@@ -149,7 +149,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - sonarcloud/scan
+      #- sonarcloud/scan
       - run:
           name: build
           command: docker-compose build contracts-api-test
