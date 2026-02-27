@@ -26,7 +26,7 @@
     <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="Hackney.Core.Http" Version="1.73.0-feat-patch-api-g0004" />
-    <PackageReference Include="Hackney.Core.JWT" Version="1.72.0" />
+    <PackageReference Include="Hackney.Core.JWT" Version="1.87.0" />
     <PackageReference Include="Hackney.Core.Sns" Version="1.74.0-feat-generic-sns0002" />
     <PackageReference Include="Hackney.Core.Testing.DynamoDb" Version="1.57.0" />
     <PackageReference Include="Hackney.Core.Testing.Shared" Version="1.54.0" />
