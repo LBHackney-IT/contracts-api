@@ -40,7 +40,20 @@ namespace ContractsApi.Tests.V1.Factories
             result.Brma.Should().Be(contractDb.Brma);
             result.IsActive.Should().Be(contractDb.IsActive);
             result.ApprovalStatus.Should().Be(contractDb.ApprovalStatus);
-            result.Stage.Should().Be(contractDb.Stage);
+            result.ApprovalStatusReason.Should().Be(contractDb.ApprovalStatusReason);
+            result.HoldPayment.Should().Be(contractDb.HoldPayment);
+            result.VatRegistrationNumber.Should().Be(contractDb.VatRegistrationNumber);
+            result.ReviewDate.Should().Be(contractDb.ReviewDate);
+            result.ExtensionDate.Should().Be(contractDb.ExtensionDate);
+            result.ReasonForExtensionDate.Should().Be(contractDb.ReasonForExtensionDate);
+            result.SelfBillingAgreement.Should().Be(contractDb.SelfBillingAgreement);
+            result.OptionToTax.Should().Be(contractDb.OptionToTax);
+            result.OptionToTaxLinkToGoogleDrive.Should().Be(contractDb.OptionToTaxLinkToGoogleDrive);
+            result.Rates.Should().Be(contractDb.Rates);
+            result.DefaultTenureType.Should().Be(contractDb.DefaultTenureType);
+            result.SuspensionDate.Should().Be(contractDb.SuspensionDate);
+            result.ReasonForSuspensionDate.Should().Be(contractDb.ReasonForSuspensionDate);
+            result.ContractManagement.Should().Be(contractDb.ContractManagement);
         }
 
         [Fact]

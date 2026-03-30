@@ -44,7 +44,8 @@ namespace ContractsApi.V1.Factories
                 Rates = contractDb.Rates,
                 DefaultTenureType = contractDb.DefaultTenureType,
                 SuspensionDate = contractDb.SuspensionDate,
-                ReasonForSuspensionDate = contractDb.ReasonForSuspensionDate
+                ReasonForSuspensionDate = contractDb.ReasonForSuspensionDate,
+                ContractManagement = contractDb.ContractManagement
             };
         }
 
@@ -84,7 +85,8 @@ namespace ContractsApi.V1.Factories
                 Rates = contract.Rates,
                 DefaultTenureType = contract.DefaultTenureType,
                 SuspensionDate = contract.SuspensionDate,
-                ReasonForSuspensionDate = contract.ReasonForSuspensionDate
+                ReasonForSuspensionDate = contract.ReasonForSuspensionDate,
+                ContractManagement = contract.ContractManagement
             };
         }
     }

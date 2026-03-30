@@ -1,6 +1,5 @@
 using ContractsApi.V1.Boundary.Requests;
 using ContractsApi.V1.Boundary.Response;
-using ContractsApi.V1.Domain;
 using ContractsApi.V1.Factories;
 using ContractsApi.V1.Gateways;
 using ContractsApi.V1.UseCase.Interfaces;
@@ -26,6 +25,15 @@ namespace ContractsApi.V1.UseCase
 
         public async Task<ContractResponseObject> ExecuteAsync(CreateContractRequestObject createContractRequestObject, Token token)
         {
+            if (createContractRequestObject.ContractManagement.ParentContractId != null)
+            {
+                var requestForGateway = new ContractQueryRequest
+                {
+                    Id = createContractRequestObject.ContractManagement.ParentContractId.Value
+                };
+                var existingParentContract = await _contractGateway.GetContractById(requestForGateway).ConfigureAwait(false);
+                if (existingParentContract == null) { throw new Exception($"Failed creating contract: no parent contract with id [{createContractRequestObject.ContractManagement.ParentContractId.Value}] was found"); }
+            }
             var contract = await _contractGateway.PostNewContractAsync(createContractRequestObject.ToDatabase()).ConfigureAwait(false);
             if (contract != null && token != null)
             {

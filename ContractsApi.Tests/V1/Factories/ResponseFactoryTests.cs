@@ -54,7 +54,9 @@ namespace ContractsApi.Tests.V1.Factories
             response.Rates.Should().Be(contract.Rates);
             response.DefaultTenureType.Should().Be(contract.DefaultTenureType);
             response.SuspensionDate.Should().Be(contract.SuspensionDate);
-            response.ReasonForExtensionDate.Should().Be(contract.ReasonForExtensionDate);
+            response.ReasonForSuspensionDate.Should().Be(contract.ReasonForSuspensionDate);
+            response.ContractManagement.Should().Be(contract.ContractManagement);
+
         }
     }
 }
