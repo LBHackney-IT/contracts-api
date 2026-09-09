@@ -7,6 +7,8 @@ namespace ContractsApi
     [ExcludeFromCodeCoverage]
     public static class Program
     {
+        // Keep IWebHostBuilder so WebApplicationFactory uses the same host path as before the upgrade.
+#pragma warning disable ASPDEPR008
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
@@ -15,5 +17,6 @@ namespace ContractsApi
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
+#pragma warning restore ASPDEPR008
     }
 }
