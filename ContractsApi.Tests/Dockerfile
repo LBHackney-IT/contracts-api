@@ -20,14 +20,14 @@ RUN apt-get update && apt-get install -y openjdk-17-jdk && apt-get clean \
 
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-RUN dotnet sonarscanner begin \
+RUN if [ -n "${SONAR_TOKEN}" ]; then dotnet sonarscanner begin \
 /k:"LBHackney-IT_contracts-api" \
 /o:"lbhackney-it" \
 /d:sonar.host.url=https://sonarcloud.io \
 /d:sonar.login="${SONAR_TOKEN}" \
 /d:sonar.coverageReportPaths="coverage/SonarQube.xml" \
 /d:sonar.dotnet.excludeTestProjects=true \
-/d:sonar.exclusions="**/*.js, **/*.ts, **/*.css"
+/d:sonar.exclusions="**/*.js, **/*.ts, **/*.css"; fi
 
 # Copy csproj and nuget config and restore as distinct layers
 COPY ./ContractsApi.sln ./
@@ -41,9 +41,9 @@ RUN dotnet restore ./ContractsApi/ContractsApi.csproj \
 # Copy everything else and build
 COPY . .
 
-RUN dotnet build ./ContractsApi/ContractsApi.csproj --no-restore --no-dependencies \
-&& dotnet build ./ContractsApi.Tests/ContractsApi.Tests.csproj --no-restore
+RUN dotnet build ./ContractsApi/ContractsApi.csproj --no-dependencies \
+&& dotnet build ./ContractsApi.Tests/ContractsApi.Tests.csproj
 
 CMD dotnet test ./ContractsApi.Tests/ContractsApi.Tests.csproj --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage \
     && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube" "-verbosity:Off" \
-    && (dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}" > /dev/null)
+    && if [ -n "${SONAR_TOKEN}" ]; then (dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}" > /dev/null); fi
