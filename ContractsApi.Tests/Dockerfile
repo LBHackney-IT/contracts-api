@@ -11,11 +11,10 @@ ENV SONAR_TOKEN=$SONAR_TOKEN
 
 WORKDIR /app
 
-# Install and run sonar cloud scanner
-RUN apt-get update && apt-get install -y openjdk-17-jdk && apt-get clean \
-# install sonar scanner
-&& dotnet tool install --global dotnet-sonarscanner \
-# Install report generator
+# Install sonar scanner and coverage report generator.
+# Do not pre-install Java: SonarScanner for .NET (7+) auto-provisions a JRE at analysis
+# time, which keeps the runtime in step with SonarQube Cloud's requirements.
+RUN dotnet tool install --global dotnet-sonarscanner \
 && dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.2.0
 
 ENV PATH="$PATH:/root/.dotnet/tools"
