@@ -253,6 +253,27 @@ namespace ContractsApi.Tests.V1.Gateways
         }
 
         [Fact]
+        public async Task PatchContractThrowsErrorIfTryingToSuspendBlock()
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+            var currentContract = _fixture.Build<ContractDb>().With(x => x.VersionNumber, (int?) null).With(x => x.StartDate, (DateTime?) today).Create();
+            currentContract.ContractManagement.ContractHierarchy = ContractHierarchy.Block;
+            await InsertDataIntoDynamoDB(currentContract).ConfigureAwait(false);
+
+            var contractId = currentContract.Id;
+            var request = _fixture.Create<EditContractRequest>();
+            var suppliedVersion = 0;
+            request.HandbackDate = tomorrow;
+            request.SuspensionDate = tomorrow;
+
+            Func<Task<UpdateEntityResult<ContractDb>>> func = async () =>
+                await _classUnderTest.PatchContract(contractId, request, It.IsAny<string>(), suppliedVersion).ConfigureAwait(false);
+
+            await func.Should().ThrowAsync<SuspendingBlockException>().WithMessage("It is not possible to add a suspension to blocks");
+        }
+
+        [Fact]
         public async Task PatchContractSuccessfullyUpdatesAContract()
         {
             var today = DateTime.Today;
@@ -264,6 +285,7 @@ namespace ContractsApi.Tests.V1.Gateways
             var contractId = currentContract.Id;
             var request = _fixture.Create<EditContractRequest>();
             request.HandbackDate = tomorrow;
+            request.SuspensionDate = null;
             var requestBody = "{ \"StartDate\":\"key7d2d6e42-0cbf-411a-b66c-bc35da8b6061\":{ },\"EndDate\":\"89017f11-95f7-434d-96f8-178e33685fb4\"}}";
             var suppliedVersion = 0;
 
