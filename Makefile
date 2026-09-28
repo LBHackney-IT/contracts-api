@@ -16,7 +16,7 @@ shell:
 
 .PHONY: test
 test:
-	docker-compose up dynamodb-database & docker-compose build contracts-api-test && docker-compose up contracts-api-test
+	docker-compose up -d dynamodb-database localstack-contracts-api && docker-compose build contracts-api-test && docker-compose up --abort-on-container-exit --exit-code-from contracts-api-test contracts-api-test
 
 .PHONY: lint
 lint:

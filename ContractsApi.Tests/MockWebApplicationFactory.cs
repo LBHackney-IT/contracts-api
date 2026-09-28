@@ -51,6 +51,11 @@ namespace ContractsApi.Tests
             EnsureEnvVarConfigured("Sns_LocalMode", "true");
             EnsureEnvVarConfigured("Localstack_SnsServiceUrl", "http://localhost:4566");
 
+            // Startup registers X-Ray for all AWS services, but the fixture setup below runs during
+            // host build, where there is no active segment. appsettings sets UseRuntimeErrors, so
+            // without this the instrumented DynamoDb client throws instead of logging.
+            EnsureEnvVarConfigured("AWS_XRAY_CONTEXT_MISSING", "LOG_ERROR");
+
             Client = CreateClient();
         }
 
@@ -79,6 +84,11 @@ namespace ContractsApi.Tests
         {
             builder.ConfigureAppConfiguration(b => b.AddEnvironmentVariables())
                 .UseStartup<Startup>();
+            // The Hackney.Core testing fixtures register a singleton IDynamoDbFixture that consumes
+            // a scoped IDynamoDBContext, and an ISnsEventVerifier needing an unregistered IAmazonSQS.
+            // Host.CreateDefaultBuilder turns on ValidateOnBuild in Development, which rejects both
+            // even though neither is resolved through this provider.
+            builder.UseDefaultServiceProvider(options => options.ValidateOnBuild = false);
             builder.ConfigureServices(services =>
             {
                 services.ConfigureDynamoDB();
