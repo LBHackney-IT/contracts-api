@@ -172,11 +172,6 @@ jobs:
     steps:
       - assume-role-and-persist-workspace:
           aws-account: $AWS_ACCOUNT_PRODUCTION
-  assume-role-pre-production:
-    executor: docker-python
-    steps:
-      - assume-role-and-persist-workspace:
-          aws-account: $AWS_ACCOUNT_PRE_PRODUCTION
   terraform-init-and-plan-development:
     executor: docker-terraform
     steps:
@@ -222,21 +217,6 @@ jobs:
     steps:
       - terraform-apply:
           environment: "production"
-  terraform-init-and-plan-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-init-then-plan:
-          environment: "pre-production"
-  terraform-compliance-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-compliance:
-          environment: "pre-production"
-  terraform-apply-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-apply:
-          environment: "pre-production"
   deploy-to-development:
     executor: docker-dotnet
     steps:
@@ -252,11 +232,6 @@ jobs:
     steps:
       - deploy-lambda:
           stage: "production"
-  deploy-to-pre-production:
-    executor: docker-dotnet
-    steps:
-      - deploy-lambda:
-          stage: "pre-production"
 workflows:
   check-and-deploy-development:
     jobs:
@@ -393,48 +368,3 @@ workflows:
           filters:
             branches:
               only: release
-  
-  deploy-terraform-pre-production:
-    jobs:
-      - permit-pre-production-terraform-workflow:
-          type: approval
-          filters:
-            branches:
-              only: release
-      - assume-role-pre-production:
-          context: api-assume-role-housing-pre-production-context
-          requires:
-            - permit-pre-production-terraform-workflow
-      - terraform-init-and-plan-pre-production:
-          requires:
-            - assume-role-pre-production
-      - terraform-compliance-pre-production:
-          requires:
-            - terraform-init-and-plan-pre-production
-      - permit-pre-production-terraform-deployment:
-          type: approval
-          requires:
-            - terraform-compliance-pre-production
-      - terraform-apply-pre-production:
-          requires:
-            - permit-pre-production-terraform-deployment
-
-  deploy-code-pre-production:
-    jobs:
-      - build-and-test:
-          filters:
-            branches:
-              only: release
-          context: 
-            - api-nuget-token-context
-            - SonarCloud
-      - assume-role-pre-production:
-          context: api-assume-role-housing-pre-production-context
-          requires:
-            - build-and-test
-      - deploy-to-pre-production:
-          context:
-          - api-nuget-token-context
-          - "Serverless Framework"
-          requires:
-            - assume-role-pre-production        
