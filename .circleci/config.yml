@@ -102,43 +102,6 @@ commands:
           root: *workspace_root
           paths:
             - .aws
-  terraform-destroy-plan:
-    description: "Creates a Terraform destruction plan"
-    parameters:
-      environment:
-        type: string
-    steps:
-      - *attach_workspace
-      - checkout
-      - run:
-          name: get and init
-          command: |
-            cd ./terraform/<<parameters.environment>>/
-            terraform get -update=true
-            terraform init
-      - run:
-          name: plan destroy
-          command: |
-            cd ./terraform/<<parameters.environment>>/
-            terraform plan -destroy -out=destroy.plan
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - .aws
-            - project/*
-  terraform-destroy:
-    description: "Destroys resources from the approved Terraform plan"
-    parameters:
-      environment:
-        type: string
-    steps:
-      - *attach_workspace
-      - checkout
-      - run:
-          name: destroy
-          command: |
-            cd ./terraform/<<parameters.environment>>/
-            terraform apply -auto-approve destroy.plan
   deploy-lambda:
     description: "Deploys API via Serverless"
     parameters:
@@ -169,30 +132,6 @@ commands:
             npm i serverless-associate-waf
             npm i @serverless/safeguards-plugin --save-dev
             sls deploy --stage <<parameters.stage>> --conceal
-  remove-lambda:
-    description: "Removes Serverless resources without building deployment artifacts"
-    parameters:
-      stage:
-        type: string
-    steps:
-      - *attach_workspace
-      - checkout
-      - run:
-          name: Install Node.js
-          command: |
-            curl -sL https://deb.nodesource.com/setup_20.x | bash -
-            apt-get update && apt-get install -y nodejs
-      - run:
-          name: Install Serverless Framework v4 and plugins
-          command: |
-            npm install --global serverless@4
-            cd ./ContractsApi/
-            npm install --no-save --package-lock=false serverless-associate-waf @serverless/safeguards-plugin
-      - run:
-          name: Remove Serverless resources
-          command: |
-            cd ./ContractsApi/
-            sls remove --stage <<parameters.stage>>
 
 jobs:
   check-code-formatting:
@@ -233,11 +172,6 @@ jobs:
     steps:
       - assume-role-and-persist-workspace:
           aws-account: $AWS_ACCOUNT_PRODUCTION
-  assume-role-pre-production:
-    executor: docker-python
-    steps:
-      - assume-role-and-persist-workspace:
-          aws-account: $AWS_ACCOUNT_PRE_PRODUCTION
   terraform-init-and-plan-development:
     executor: docker-terraform
     steps:
@@ -283,31 +217,6 @@ jobs:
     steps:
       - terraform-apply:
           environment: "production"
-  terraform-init-and-plan-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-init-then-plan:
-          environment: "pre-production"
-  terraform-compliance-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-compliance:
-          environment: "pre-production"
-  terraform-apply-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-apply:
-          environment: "pre-production"
-  terraform-destroy-plan-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-destroy-plan:
-          environment: "pre-production"
-  terraform-destroy-pre-production:
-    executor: docker-terraform
-    steps:
-      - terraform-destroy:
-          environment: "pre-production"
   deploy-to-development:
     executor: docker-dotnet
     steps:
@@ -323,16 +232,6 @@ jobs:
     steps:
       - deploy-lambda:
           stage: "production"
-  deploy-to-pre-production:
-    executor: docker-dotnet
-    steps:
-      - deploy-lambda:
-          stage: "pre-production"
-  remove-from-pre-production:
-    executor: docker-dotnet
-    steps:
-      - remove-lambda:
-          stage: "pre-production"
 workflows:
   check-and-deploy-development:
     jobs:
@@ -469,83 +368,3 @@ workflows:
           filters:
             branches:
               only: release
-  
-  deploy-terraform-pre-production:
-    jobs:
-      - permit-pre-production-terraform-workflow:
-          type: approval
-          filters:
-            branches:
-              only: release
-      - assume-role-pre-production:
-          context: api-assume-role-housing-pre-production-context
-          requires:
-            - permit-pre-production-terraform-workflow
-      - terraform-init-and-plan-pre-production:
-          requires:
-            - assume-role-pre-production
-      - terraform-compliance-pre-production:
-          requires:
-            - terraform-init-and-plan-pre-production
-      - permit-pre-production-terraform-deployment:
-          type: approval
-          requires:
-            - terraform-compliance-pre-production
-      - terraform-apply-pre-production:
-          requires:
-            - permit-pre-production-terraform-deployment
-
-  deploy-code-pre-production:
-    jobs:
-      - build-and-test:
-          filters:
-            branches:
-              only: release
-          context: 
-            - api-nuget-token-context
-            - SonarCloud
-      - assume-role-pre-production:
-          context: api-assume-role-housing-pre-production-context
-          requires:
-            - build-and-test
-      - deploy-to-pre-production:
-          context:
-          - api-nuget-token-context
-          - "Serverless Framework"
-          requires:
-            - assume-role-pre-production        
-
-  teardown-pre-production:
-    jobs:
-      - assume-role-pre-production:
-          context: api-assume-role-housing-pre-production-context
-          filters:
-            branches:
-              only: feat/ssi-1369-teardown-pre-production
-      - remove-from-pre-production:
-          context:
-            - "Serverless Framework"
-          requires:
-            - assume-role-pre-production
-          filters:
-            branches:
-              only: feat/ssi-1369-teardown-pre-production
-      - terraform-destroy-plan-pre-production:
-          requires:
-            - remove-from-pre-production
-          filters:
-            branches:
-              only: feat/ssi-1369-teardown-pre-production
-      - permit-pre-production-terraform-destruction:
-          type: approval
-          requires:
-            - terraform-destroy-plan-pre-production
-          filters:
-            branches:
-              only: feat/ssi-1369-teardown-pre-production
-      - terraform-destroy-pre-production:
-          requires:
-            - permit-pre-production-terraform-destruction
-          filters:
-            branches:
-              only: feat/ssi-1369-teardown-pre-production
