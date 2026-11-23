@@ -31,6 +31,7 @@
     <PackageReference Include="Hackney.Core.Middleware" Version="1.49.0" />
     <PackageReference Include="Hackney.Core.Sns" Version="1.74.0-feat-generic-sns0002" />
     <PackageReference Include="Hackney.Core.Validation" Version="1.56.0" />
+    <PackageReference Include="Hackney.Core.Authorization" Version="2.0.0-9716176-p1" />
     <PackageReference Include="Microsoft.AspNetCore.HealthChecks" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="4.1.1" />
